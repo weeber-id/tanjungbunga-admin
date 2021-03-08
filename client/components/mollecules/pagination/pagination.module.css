@@ -1,0 +1,7 @@
+.ic-active path {
+  fill: white;
+}
+
+.ic-disable path {
+  fill: #808080;
+}

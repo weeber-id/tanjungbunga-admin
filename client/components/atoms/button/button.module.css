@@ -1,0 +1,13 @@
+.btn {
+  min-height: 42px;
+}
+
+.btn-grey {
+  color: #6e6e76;
+  background: #f1f1f5;
+}
+
+.btn-grey--outlined {
+  background: transparent;
+  border: 1px solid #6e6e76;
+}
