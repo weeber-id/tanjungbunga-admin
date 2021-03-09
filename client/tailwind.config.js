@@ -6,6 +6,9 @@ module.exports = {
       minWidth: {
         72: '18rem',
       },
+      gridTemplateColumns: {
+        table: '60px 1fr 2fr repeat(2, 1fr) 60px',
+      },
     },
     fontFamily: {
       sans: ["'Roboto'", 'sans-serif'],
