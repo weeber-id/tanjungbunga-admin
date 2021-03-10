@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { IconSearch } from '../../../assets';
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  variant?: 'search' | 'default' | 'search-right';
+  variant?: 'search' | 'default' | 'search-right' | 'borderless';
   inputClassName?: string;
   fullWidth?: boolean;
   width?: string | number;
@@ -35,7 +35,7 @@ const TextField: React.FC<TextFieldProps> = ({
         <IconSearch className="absolute transform top-1/2 left-2 -translate-y-2/4" />
       ) : null}
       {labelText ? (
-        <label className="block text-body-sm font-bold text-black mb-1.5">
+        <label className="block text-body text-black mb-1.5">
           {labelText} <span className="text-red">{errorMessage && '*'}</span>
         </label>
       ) : null}
@@ -44,13 +44,14 @@ const TextField: React.FC<TextFieldProps> = ({
           {...otherProps}
           style={{ height: variant === 'search' ? '40px' : '32px' }}
           type={variant.startsWith('search') ? 'search' : type}
-          className={classNames('focus:outline-none px-3', inputClassName, {
+          className={classNames('focus:outline-none px-2', inputClassName, {
             'border-b text-body pl-11': variant === 'search',
             'w-full': fullWidth || width,
             'border-red': isError,
             'border-purple-light': !isError,
             'border text-body-sm rounded-md': variant === 'default',
             'border-0': variant === 'search-right',
+            'border-b border-black text-body': variant === 'borderless',
           })}
         />
         {variant === 'search-right' && (

@@ -8,6 +8,7 @@ module.exports = {
       },
       gridTemplateColumns: {
         table: '60px 1fr 2fr repeat(2, 1fr) 60px',
+        page: '240px 1fr',
       },
     },
     fontFamily: {

@@ -10,7 +10,7 @@ const KomoditasPage = () => {
           Komoditas
         </h5>
         <div className="px-12 mt-6">
-          <Button>+ Tambah Komoditas</Button>
+          <Button href="/komoditas/create">+ Tambah Komoditas</Button>
           <div className="flex items-center justify-between mt-10">
             <Pagination maxPage={7} />
             <Textfield variant="search-right" />
