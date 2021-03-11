@@ -3,3 +3,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.public-DraftStyleDefault-block {
+  margin: 4px 0 !important;
+}

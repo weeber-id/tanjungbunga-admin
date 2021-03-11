@@ -9,12 +9,16 @@
     "next:dev": "next dev"
   },
   "dependencies": {
+    "@material-ui/core": "4.0.0",
+    "@material-ui/pickers": "^3.2.10",
     "@svgr/webpack": "^5.5.0",
     "@types/classnames": "^2.2.11",
     "@types/humanize-duration": "^3.18.1",
     "@types/numeral": "^2.0.1",
+    "@types/react-draft-wysiwyg": "^1.13.1",
     "autoprefixer": "^10.0.4",
     "classnames": "^2.2.6",
+    "draft-js": "^0.11.7",
     "humanize-duration": "^3.25.1",
     "next": "latest",
     "next-compose-plugins": "^2.2.1",
@@ -23,6 +27,8 @@
     "postcss": "^8.1.10",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-draft-wysiwyg": "^1.14.5",
+    "react-easy-crop": "^3.3.1",
     "tailwindcss": "^2.0.2",
     "ts-node": "^9.1.1"
   },

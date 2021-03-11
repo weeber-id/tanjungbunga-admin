@@ -38,7 +38,7 @@ const Button = forwardRef<any, ButtonProps>(
         'text-red border-red hover:text-white hover:bg-red':
           color === 'red' && variant === 'outlined',
         'bg-purple-light hover:bg-red': color === 'default' && variant === 'default',
-        'text-purple-light border-purple-light hover:text-white hover:bg-red':
+        'text-purple-light border-purple-light hover:text-white hover:bg-red hover:border-0':
           color === 'default' && variant === 'outlined',
         'w-full': fullWidth,
         [styles['btn']]: !customHeight,

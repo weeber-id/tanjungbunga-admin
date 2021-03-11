@@ -3,10 +3,12 @@ import classNames from 'classnames';
 interface ImageProps {
   src?: string;
   alt?: string;
-  aspectRatio?: '4/3' | '16/9';
+  aspectRatio?: '4/3' | '16/9' | '1/1';
   width?: number;
   height?: number;
   className?: string;
+  objectFit?: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
+  objectPosition?: string;
 }
 
 const Image: React.FC<ImageProps> = ({
@@ -16,6 +18,8 @@ const Image: React.FC<ImageProps> = ({
   width,
   height,
   className,
+  objectFit,
+  objectPosition,
 }) => {
   const AR = aspectRatio.split('/');
 
@@ -26,7 +30,12 @@ const Image: React.FC<ImageProps> = ({
       style={{ paddingTop, width, height }}
       className={classNames('relative w-full overflow-hidden', className)}
     >
-      <img className="absolute top-0 left-0 w-full h-full" src={src} alt={alt} />
+      <img
+        style={{ objectPosition, objectFit }}
+        className="absolute top-0 left-0 w-full h-full"
+        src={src}
+        alt={alt}
+      />
     </div>
   );
 };

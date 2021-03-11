@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import styles from './checkbox.module.css';
+import styles from './switch.module.css';
 
-interface CheckboxProps {
+interface SwitchProps {
   className?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   checked?: boolean;
@@ -9,7 +9,7 @@ interface CheckboxProps {
   value?: string;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ className, onChange, checked, name, value }) => {
+const Switch: React.FC<SwitchProps> = ({ className, onChange, checked, name, value }) => {
   return (
     <label className={classNames(styles.switch, className)}>
       <input
@@ -25,4 +25,4 @@ const Checkbox: React.FC<CheckboxProps> = ({ className, onChange, checked, name,
   );
 };
 
-export default Checkbox;
+export default Switch;

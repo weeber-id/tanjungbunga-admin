@@ -1,5 +1,5 @@
 import { DummyMasakan } from 'assets';
-import { Button, Checkbox, Image, MeetBallMore, Pagination, Sidebar, Textfield } from 'components';
+import { Button, Switch, Image, MeetBallMore, Pagination, Sidebar, Textfield } from 'components';
 
 const KomoditasPage = () => {
   return (
@@ -32,7 +32,7 @@ const KomoditasPage = () => {
               <div>Komoditas A</div>
               <div>Rp 120.000</div>
               <div>
-                <Checkbox />
+                <Switch />
               </div>
               <div className="relative">
                 <MeetBallMore />

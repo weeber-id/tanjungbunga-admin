@@ -1,5 +1,5 @@
 import { DummyHotel } from 'assets';
-import { Button, Checkbox, Image, MeetBallMore, Pagination, Sidebar, Textfield } from 'components';
+import { Button, Switch, Image, MeetBallMore, Pagination, Sidebar, Textfield } from 'components';
 
 const PenginapanPage = () => {
   return (
@@ -32,7 +32,7 @@ const PenginapanPage = () => {
               <div>Hotel A</div>
               <div>Rp 120.000 /hari</div>
               <div>
-                <Checkbox />
+                <Switch />
               </div>
               <div className="relative">
                 <MeetBallMore />
