@@ -14,6 +14,7 @@ const Editor = dynamic(
 
 const CreateKomoditasPage = () => {
   const [price, setPrice] = useState<string>('');
+  const [isUpload, setUpload] = useState<boolean>(false);
 
   const addCommas = (num: string) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const removeNonNumeric = (num: string) => num.toString().replace(/[^0-9]/g, '');
@@ -26,7 +27,7 @@ const CreateKomoditasPage = () => {
 
   return (
     <>
-      <UploadPhoto />
+      {isUpload && <UploadPhoto onCancel={() => setUpload(false)} />}
       <div className="grid grid-cols-page h-screen">
         <Sidebar />
         <div className="overflow-y-auto">
@@ -37,7 +38,12 @@ const CreateKomoditasPage = () => {
             <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-6">
               <div className="flex flex-col items-start">
                 <Image className="mb-4" src={DummyDefaultUpload} aspectRatio="4/3" />
-                <button className="text-body mb-2 hover:text-purple-light">Upload foto</button>
+                <button
+                  onClick={() => setUpload(true)}
+                  className="text-body mb-2 hover:text-purple-light"
+                >
+                  Upload foto
+                </button>
                 <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
               </div>
               <div className="flex flex-col">

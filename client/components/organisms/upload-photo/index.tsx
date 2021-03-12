@@ -9,9 +9,10 @@ import { getCroppedImg } from 'utils/get-cropped-image';
 interface UploadPhotoProps {
   onUpload?: (blob: Blob) => void;
   onCancel?: () => void;
+  aspectRatio?: '4/3' | '16/9' | '1/1';
 }
 
-const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload }) => {
+const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload, aspectRatio = '1/1' }) => {
   const [isEdit, setEdit] = useState<boolean>(false);
   const [photo, setPhoto] = useState<string>('');
   const [blob, setBlob] = useState<Blob>();
@@ -27,6 +28,10 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload }) => {
     height: 0,
     width: 0,
   });
+
+  const AR = aspectRatio.split('/');
+
+  const aspect = Number(AR[1]) / Number(AR[0]);
 
   const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -89,7 +94,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload }) => {
                 crop={cropState.crop}
                 zoom={cropState.zoom}
                 image={cropState.image}
-                aspect={1 / 1}
+                aspect={aspect}
                 onCropComplete={(crop, cropAreaPixel) => {
                   setCropAreaPixel(cropAreaPixel);
                   setCachedCrop(crop);
@@ -124,7 +129,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload }) => {
               <div className="w-64">
                 <Img
                   className="rounded-full my-5 bg-blue-light"
-                  aspectRatio="1/1"
+                  aspectRatio={aspectRatio}
                   objectFit="cover"
                   objectPosition="top"
                   src={photo}
