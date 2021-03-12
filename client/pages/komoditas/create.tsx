@@ -6,6 +6,7 @@ import { Image, Radio, Sidebar, UploadPhoto } from 'components';
 import TextField from 'components/atoms/textfield';
 
 const Editor = dynamic(
+  // eslint-disable-next-line
   // @ts-ignore
   () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
   { ssr: false }
