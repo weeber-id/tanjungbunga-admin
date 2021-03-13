@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { forwardRef } from 'react';
 import styles from './button.module.css';
 
-interface ButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'outlined' | 'default';
   color?: 'red' | 'default';
   fullWidth?: boolean;

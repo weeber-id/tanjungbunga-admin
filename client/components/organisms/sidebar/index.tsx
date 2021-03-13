@@ -2,8 +2,10 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import { IconTanjungBunga } from 'assets';
 import { useRouter } from 'next/router';
+import { useUser } from 'hooks';
 
 const Sidebar = () => {
+  const { user } = useUser();
   const { asPath } = useRouter();
 
   return (
@@ -16,7 +18,7 @@ const Sidebar = () => {
       <div className="px-5">
         <div className="py-6 px-2 text-body border-b border-purple">
           <p className="text-purple-light mb-11">
-            Hello <span className="font-bold">Dodo</span>, What do u want today?
+            Hello <span className="font-bold">{user?.name}</span>, What do u want today?
           </p>
           <Link href="/artikel">
             <a
