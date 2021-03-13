@@ -27,7 +27,7 @@ const CreateKomoditasPage = () => {
 
   return (
     <>
-      {isUpload && <UploadPhoto onCancel={() => setUpload(false)} />}
+      {isUpload && <UploadPhoto aspectRatio="4/3" shape="rect" onCancel={() => setUpload(false)} />}
       <div className="grid grid-cols-page h-screen">
         <Sidebar />
         <div className="overflow-y-auto">

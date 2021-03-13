@@ -10,9 +10,15 @@ interface UploadPhotoProps {
   onUpload?: (blob: Blob) => void;
   onCancel?: () => void;
   aspectRatio?: '4/3' | '16/9' | '1/1';
+  shape?: 'rect' | 'round';
 }
 
-const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload, aspectRatio = '1/1' }) => {
+const UploadPhoto: React.FC<UploadPhotoProps> = ({
+  onCancel,
+  onUpload,
+  aspectRatio = '1/1',
+  shape = 'round',
+}) => {
   const [isEdit, setEdit] = useState<boolean>(false);
   const [photo, setPhoto] = useState<string>('');
   const [blob, setBlob] = useState<Blob>();
@@ -31,7 +37,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload, aspectRat
 
   const AR = aspectRatio.split('/');
 
-  const aspect = Number(AR[1]) / Number(AR[0]);
+  const aspect = Number(AR[0]) / Number(AR[1]);
 
   const handleSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target;
@@ -99,7 +105,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload, aspectRat
                   setCropAreaPixel(cropAreaPixel);
                   setCachedCrop(crop);
                 }}
-                cropShape="round"
+                cropShape={shape}
               />
             </div>
             <div className="px-6 mt-6">
@@ -128,7 +134,9 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({ onCancel, onUpload, aspectRat
             <div className="flex flex-col items-center px-24">
               <div className="w-64">
                 <Img
-                  className="rounded-full my-5 bg-blue-light"
+                  className={classNames('my-5 bg-blue-light', {
+                    'rounded-full': shape === 'round',
+                  })}
                   aspectRatio={aspectRatio}
                   objectFit="cover"
                   objectPosition="top"
