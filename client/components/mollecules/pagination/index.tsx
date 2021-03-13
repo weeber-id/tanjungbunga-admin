@@ -7,14 +7,18 @@ interface PaginationProps {
   maxPage?: number;
   isDisabled?: boolean;
   onChange?: (currentPage: number) => void;
+  currentPage?: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ maxPage = 10, isDisabled, onChange }) => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+const Pagination: React.FC<PaginationProps> = ({
+  maxPage = 10,
+  isDisabled,
+  onChange,
+  currentPage = 1,
+}) => {
   let element: any[] = [];
 
   const handleChangePage = (page: number) => {
-    if (!isDisabled) setCurrentPage(page);
     if (onChange && !isDisabled) onChange(page);
   };
 
