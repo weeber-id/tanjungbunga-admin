@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { IconTanjungBunga } from 'assets';
 import { useRouter } from 'next/router';
 import { useUser } from 'hooks';
+import { Button } from 'components/atoms';
 
 const Sidebar = () => {
   const { user } = useUser({
@@ -13,13 +14,19 @@ const Sidebar = () => {
   return (
     <div className="flex flex-col h-full bg-blue-light">
       <div className="px-5">
-        <div className="flex py-6 justify-center border-b border-purple">
+        <div className="flex flex-col py-6 justify-center border-b border-purple">
           <IconTanjungBunga height={52} />
+          {user?.role === 0 && (
+            <>
+              <div className="text-center text-red my-3">Superadmin</div>
+              <Button href="/manage-users">Kelola User</Button>
+            </>
+          )}
         </div>
       </div>
       <div className="px-5">
         <div className="py-6 px-2 text-body border-b border-purple">
-          <p className="text-purple-light mb-11">
+          <p className="text-purple-light mb-8">
             Hello <span className="font-bold">{user?.name}</span>, What do u want today?
           </p>
           <div className="flex flex-col">
