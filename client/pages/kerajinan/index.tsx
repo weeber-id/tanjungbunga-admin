@@ -74,7 +74,11 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
         <div className="px-12 mt-6">
           <Button>+ Tambah Belanja</Button>
           <div className="flex items-center justify-between mt-10">
-            <Pagination currentPage={currentPage} maxPage={handcrafts?.max_page} />
+            <Pagination
+              onChange={(cp) => setCurrentPage(cp)}
+              currentPage={currentPage}
+              maxPage={handcrafts?.max_page}
+            />
             <form onSubmit={handleSubmitSearch}>
               <Textfield
                 value={searchCache}

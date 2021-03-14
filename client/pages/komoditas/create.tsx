@@ -1,11 +1,11 @@
-// import { Editor } from 'react-draft-wysiwyg';
+import { EditorProps } from 'react-draft-wysiwyg';
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { DummyDefaultUpload } from 'assets';
 import { Image, Radio, Sidebar, UploadPhoto } from 'components';
 import TextField from 'components/atoms/textfield';
 
-const Editor = dynamic(
+const Editor: React.ComponentType<EditorProps> = dynamic(
   // eslint-disable-next-line
   // @ts-ignore
   () => import('react-draft-wysiwyg').then((mod) => mod.Editor),

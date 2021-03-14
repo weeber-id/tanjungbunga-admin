@@ -10,7 +10,7 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({
-  maxPage = 10,
+  maxPage = 1,
   isDisabled,
   onChange,
   currentPage = 1,

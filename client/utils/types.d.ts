@@ -42,3 +42,18 @@ export type Handcraft = {
   short_description: string;
   description: string;
 };
+
+export type Commodity = {
+  id: string;
+  name: string;
+  image: string;
+  slug: string;
+  price: {
+    unit: string;
+    start: string;
+    end: string;
+  };
+  links: Link[];
+  short_description: string;
+  description: string;
+};
