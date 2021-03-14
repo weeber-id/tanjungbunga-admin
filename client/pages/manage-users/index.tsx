@@ -38,7 +38,7 @@ const ManageUsersPage = () => {
           <div className="mt-6">
             <div className="flex items-center">
               <h5 className="text-h5 font-bold text-black mr-6">Seller</h5>
-              <Button>+ Tambah Seller</Button>
+              <Button href="/manage-users/create">+ Tambah Seller</Button>
             </div>
             <div className="flex items-center justify-between mt-10 mb-6">
               <Pagination
