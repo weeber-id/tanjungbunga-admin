@@ -20,6 +20,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
   shape = 'round',
 }) => {
   const [isEdit, setEdit] = useState<boolean>(false);
+  const [firstTime, setFirstTime] = useState<boolean>(false);
   const [photo, setPhoto] = useState<string>('');
   const [blob, setBlob] = useState<Blob>();
   const [cachedCrop, setCachedCrop] = useState({ x: 0, y: 0 });
@@ -54,6 +55,8 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
     });
 
     setPhoto(file);
+    setEdit(true);
+    setFirstTime(true);
   };
 
   const handleCropChange = (location: Point) => {
@@ -74,11 +77,24 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
     setBlob(blob);
     setPhoto(blobUrlObj);
     setCropState({ ...cropState, image: blobUrlObj, crop: cachedCrop, zoom: 1 });
+    setFirstTime(false);
     setEdit(false);
   };
 
   const handleUpload = () => {
     if (onUpload && blob) onUpload(blob);
+  };
+
+  const handleCancelEdit = () => {
+    if (firstTime) {
+      setPhoto('');
+      setCropState({
+        ...cropState,
+        image: '',
+      });
+    }
+
+    setEdit(false);
   };
 
   return (
@@ -119,7 +135,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
             </div>
             <div className="flex justify-end items-center w-full mt-10 mb-6 pr-4">
               <button
-                onClick={() => setEdit(false)}
+                onClick={handleCancelEdit}
                 className="text-body text-red mr-5 focus:outline-none"
               >
                 Batal
