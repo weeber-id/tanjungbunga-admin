@@ -1,5 +1,5 @@
-import Head from 'next/head';
 import { Sidebar } from 'components';
+import Head from 'next/head';
 
 export default function Home() {
   return (
