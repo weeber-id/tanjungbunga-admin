@@ -57,3 +57,13 @@ export type Commodity = {
   short_description: string;
   description: string;
 };
+
+export type Travel = {
+  id: string;
+  name: string;
+  image: string;
+  slug: string;
+  price: string;
+  short_description: string;
+  description: string;
+};

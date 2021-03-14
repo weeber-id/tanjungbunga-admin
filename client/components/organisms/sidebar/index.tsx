@@ -5,7 +5,9 @@ import { useRouter } from 'next/router';
 import { useUser } from 'hooks';
 
 const Sidebar = () => {
-  const { user } = useUser();
+  const { user } = useUser({
+    redirectTo: '/login',
+  });
   const { asPath } = useRouter();
 
   return (
@@ -20,20 +22,44 @@ const Sidebar = () => {
           <p className="text-purple-light mb-11">
             Hello <span className="font-bold">{user?.name}</span>, What do u want today?
           </p>
-          <Link href="/artikel">
-            <a
-              className={classNames(
-                'hover:text-red',
-                asPath === '/artikel' ? 'text-red' : 'text-purple-light '
-              )}
-            >
-              Artikel/Posting
-            </a>
-          </Link>
+          <div className="flex flex-col">
+            <Link href="/">
+              <a
+                className={classNames(
+                  'hover:text-red mb-5',
+                  asPath === '/' ? 'text-red' : 'text-purple-light '
+                )}
+              >
+                Dashboard
+              </a>
+            </Link>
+            <Link href="/artikel">
+              <a
+                className={classNames(
+                  'hover:text-red',
+                  asPath === '/artikel' ? 'text-red' : 'text-purple-light '
+                )}
+              >
+                Artikel/Posting
+              </a>
+            </Link>
+          </div>
         </div>
       </div>
       <div className="px-5">
         <div className="py-6 px-2 text-body flex flex-col">
+          {user?.role === 0 && (
+            <Link href="/wisata">
+              <a
+                className={classNames(
+                  'hover:text-red mb-5',
+                  asPath === '/wisata' ? 'text-red' : 'text-purple-light '
+                )}
+              >
+                Wisata
+              </a>
+            </Link>
+          )}
           <Link href="/penginapan">
             <a
               className={classNames(
