@@ -12,6 +12,11 @@ export type Facility = {
   icon: string;
 };
 
+export type Link = {
+  name: string;
+  link: string;
+};
+
 export type Lodging = {
   id: string;
   name: string;
@@ -21,11 +26,19 @@ export type Lodging = {
     value: string;
     unit: string;
   };
-  links: {
-    name: string;
-    link: string;
-  }[];
+  links: Link[];
   short_description: string;
   description: string;
   facilities: Facility[] | null;
+};
+
+export type Handcraft = {
+  id: string;
+  name: string;
+  image: string;
+  slug: string;
+  price: string;
+  links: Link[];
+  short_description: string;
+  description: string;
 };

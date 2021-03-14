@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { useState } from 'react';
 import { IconArrowLeft, IconArrowRight } from '../../../assets';
 import styles from './pagination.module.css';
 
