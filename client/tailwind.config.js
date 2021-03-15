@@ -9,13 +9,14 @@ module.exports = {
       gridTemplateColumns: {
         table: '60px 1fr 2fr repeat(2, 1fr) 60px',
         page: '240px 1fr',
+        'operation-time': '60px auto 50px 1fr 14px 1fr',
       },
     },
     fontFamily: {
       sans: ["'Roboto'", 'sans-serif'],
     },
     fontSize: {
-      h1: ['3,433125rem', '4rem'],
+      h1: ['3.433125rem', '4rem'],
       h2: ['2.746875rem', '3.875rem'],
       h3: ['2.1975rem', '2.875rem'],
       h4: ['1.758125rem', '2.3125rem'],
@@ -53,7 +54,7 @@ module.exports = {
   },
   variants: {
     extend: {
-      borderWidth: ['hover'],
+      borderWidth: ['hover', 'last'],
       margin: ['last'],
     },
   },

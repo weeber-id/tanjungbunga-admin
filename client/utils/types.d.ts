@@ -17,6 +17,44 @@ export type Link = {
   link: string;
 };
 
+export type OperationTimeState = {
+  monday: {
+    open: boolean;
+    from: string;
+    to: string;
+  };
+  tuesday: {
+    open: boolean;
+    from: string;
+    to: string;
+  };
+  wednesday: {
+    open: boolean;
+    from: string;
+    to: string;
+  };
+  thursday: {
+    open: boolean;
+    from: string;
+    to: string;
+  };
+  friday: {
+    open: boolean;
+    from: string;
+    to: string;
+  };
+  saturday: {
+    open: boolean;
+    from: string;
+    to: string;
+  };
+  sunday: {
+    open: boolean;
+    from: string;
+    to: string;
+  };
+};
+
 export type Lodging = {
   id: string;
   name: string;

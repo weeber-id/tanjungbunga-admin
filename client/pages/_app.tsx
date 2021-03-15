@@ -1,4 +1,6 @@
 import { AppProps } from 'next/app';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DayjsUtils from '@date-io/dayjs';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import 'react-input-range/lib/css/index.css';
@@ -11,7 +13,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
+        <MuiPickersUtilsProvider utils={DayjsUtils}>
+          <Component {...pageProps} />
+        </MuiPickersUtilsProvider>
       </QueryClientProvider>
     </>
   );

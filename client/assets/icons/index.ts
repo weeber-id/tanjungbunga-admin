@@ -11,6 +11,8 @@ import IconAirPanas from './icon-air-panas.svg';
 import IconWhatsapp from './icon-whatsapp.svg';
 import IconHamburger from './icon-hamburger.svg';
 import IconMeatballsMenu from './icon-meatballs-menu.svg';
+import IconAdd from './ic-add.svg';
+import IconTrash from './ic-trash.svg';
 
 export {
   IconFacebook,
@@ -26,4 +28,6 @@ export {
   IconWhatsapp,
   IconHamburger,
   IconMeatballsMenu,
+  IconAdd,
+  IconTrash,
 };
