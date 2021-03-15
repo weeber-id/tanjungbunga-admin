@@ -1,10 +1,51 @@
-import { DummyOrang } from 'assets';
+import { ImgNoAvatar } from 'assets';
 import { Button, Pagination, Sidebar, Textfield, UserAccount } from 'components';
 import { useUser } from 'hooks';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useQuery } from 'react-query';
+import { urlApi } from 'utils';
+import { User } from 'utils/types';
 
-const ManageUsersPage = () => {
+interface ManageUsersPageProps {
+  admin: {
+    data: User[];
+    max_page: number;
+  };
+  seller: {
+    data: User[];
+    max_page: number;
+  };
+}
+
+export const getServerSideProps: GetServerSideProps<ManageUsersPageProps> = async ({ req }) => {
+  const headers = new Headers();
+  if (req.headers.cookie) headers.append('cookie', req.headers.cookie);
+
+  const resAdmin = await fetch(urlApi + '/admin/list?page=1&content_per_page=10&role=0', {
+    headers: headers,
+  });
+
+  const resSeller = await fetch(urlApi + '/admin/list?page=1&content_per_page=10&role=1', {
+    headers: headers,
+  });
+
+  const dataAdmin = await resAdmin.json();
+  const dataSeller = await resSeller.json();
+
+  return {
+    props: {
+      admin: dataAdmin.data,
+      seller: dataSeller.data,
+    },
+  };
+};
+
+const ManageUsersPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
+  admin,
+  seller,
+}) => {
   const { user } = useUser({ redirectTo: '/login' });
   const Router = useRouter();
 
@@ -14,10 +55,46 @@ const ManageUsersPage = () => {
   const [searchCache, setSearchCache] = useState<string>('');
   const [search, setSearch] = useState<string>('');
 
+  const { data: admins } = useQuery(
+    'admins',
+    () => {
+      return fetch(urlApi + '/admin/list?page=1&content_per_page=10&role=0', {
+        credentials: 'include',
+      })
+        .then((res) => res.json())
+        .then((data) => data.data);
+    },
+    {
+      initialData: admin,
+    }
+  );
+
+  const { data: sellers, isSuccess } = useQuery(
+    ['sellers', currentPage, search],
+    () => {
+      const queryParams = [];
+      if (search) queryParams.push(`search=${search}`);
+      if (queryParams.length > 0) queryParams[0] = `&${queryParams[0]}`;
+
+      return fetch(
+        urlApi +
+          `/admin/list?page=${currentPage}&content_per_page=10&role=1${queryParams.join('&')}`,
+        {
+          credentials: 'include',
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => data.data);
+    },
+    {
+      initialData: seller,
+    }
+  );
+
   const handleSubmitSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSearch(searchCache);
-    // if (isSuccess) setCurrentPage(1);
+    if (isSuccess) setCurrentPage(1);
   };
 
   return (
@@ -31,8 +108,12 @@ const ManageUsersPage = () => {
           <div className="pb-20 border-b border-purple-light">
             <h5 className="text-h5 font-bold text-black mb-8">Super Admin</h5>
             <div className="grid grid-cols-2 gap-6">
-              <UserAccount name="Dadang Suparman" src={DummyOrang} />
-              <UserAccount name="Dadang Suparman" src={DummyOrang} />
+              {admins?.data?.map(({ id, name, profile_picture }) => {
+                let img = profile_picture;
+                if (!profile_picture) img = ImgNoAvatar;
+
+                return <UserAccount key={id} name={name} src={img} />;
+              })}
             </div>
           </div>
           <div className="mt-6">
@@ -44,7 +125,7 @@ const ManageUsersPage = () => {
               <Pagination
                 currentPage={currentPage}
                 onChange={(cp) => setCurrentPage(cp)}
-                maxPage={1}
+                maxPage={sellers?.max_page}
               />
               <form onSubmit={handleSubmitSearch}>
                 <Textfield
@@ -55,8 +136,15 @@ const ManageUsersPage = () => {
               </form>
             </div>
             <div className="grid grid-cols-2 gap-6">
-              <UserAccount name="Dadang Suparman" src={DummyOrang} />
-              <UserAccount name="Dadang Suparman" src={DummyOrang} />
+              {sellers?.data?.map(({ id, name, profile_picture }) => {
+                let img = profile_picture;
+                if (!profile_picture) img = ImgNoAvatar;
+
+                return <UserAccount key={id} name={name} src={img} />;
+              })}
+              {!sellers?.data && (
+                <div className="text-body text-center col-span-2 italic">Tidak ada seller</div>
+              )}
             </div>
           </div>
         </div>

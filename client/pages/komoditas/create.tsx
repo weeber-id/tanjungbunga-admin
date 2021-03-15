@@ -66,13 +66,14 @@ const CreateKomoditasPage = () => {
                   <div className="flex flex-col col-span-2">
                     <span className="text-body text-black mb-2">Jam Buka :</span>
                     <Radio labelText="Buka 24 Jam" name="jam" value="24hours" />
-                    <Radio labelText="Custom Jam" name="jam" value="custom" />
+                    <Radio labelText="Atur Jam Buka" name="jam" value="custom" />
                   </div>
                 </div>
                 <TextField
                   fullWidth
                   labelText="Penjelasan Singkat Komoditas"
                   variant="borderless"
+                  maxLength={180}
                 />
                 <div className="text-body-sm text-red text-right mt-1">0/180 Karakter</div>
               </div>
