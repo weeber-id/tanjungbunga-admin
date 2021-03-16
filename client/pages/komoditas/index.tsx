@@ -96,11 +96,11 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
       const { checked } = e.target;
 
       const body = {
-        ...commodity,
+        id: commodity.id,
         active: !checked,
       };
 
-      return fetch(urlApi + `/admin/culinary/update?id=${commodity.id}`, {
+      return fetch(urlApi + `/admin/culinary/update/active`, {
         body: JSON.stringify(body),
         method: 'POST',
         credentials: 'include',
