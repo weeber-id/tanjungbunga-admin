@@ -13,6 +13,7 @@
     "@material-ui/core": "4.0.0",
     "@material-ui/pickers": "^3.2.10",
     "@svgr/webpack": "^5.5.0",
+    "@tailwindcss/jit": "^0.1.1",
     "@types/classnames": "^2.2.11",
     "@types/draftjs-to-html": "^0.8.0",
     "@types/humanize-duration": "^3.18.1",

@@ -10,7 +10,7 @@ import {
 } from 'components';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import numeral from 'numeral';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { urlApi } from 'utils';
 import { Commodity } from 'utils/types';
@@ -91,6 +91,28 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
     }
   );
 
+  const handleChangeSwitch = useMutation(
+    ({ e, commodity }: { e: React.ChangeEvent<HTMLInputElement>; commodity: Commodity }) => {
+      const { checked } = e.target;
+
+      const body = {
+        ...commodity,
+        active: !checked,
+      };
+
+      return fetch(urlApi + `/admin/culinary/update?id=${commodity.id}`, {
+        body: JSON.stringify(body),
+        method: 'POST',
+        credentials: 'include',
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.refetchQueries({ queryKey: 'culinaries' });
+      },
+    }
+  );
+
   return (
     <>
       {handleDelete.isSuccess && (
@@ -145,27 +167,34 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                 <div>Tampilkan</div>
                 <div></div>
               </div>
-              {culinaries?.data?.map(({ id, name, price, image, active }, i) => (
-                <div
-                  key={id}
-                  className="grid gap-x-6 py-2 grid-cols-table items-center text-body text-black border border-purple-light mb-3 last:mb-0"
-                >
-                  <div className="justify-self-center self-start font-bold">
-                    {i + 1 + (currentPage - 1) * 7}
+              {culinaries?.data?.map((culinary, i) => {
+                const { id, name, price, image, active } = culinary;
+
+                return (
+                  <div
+                    key={id}
+                    className="grid gap-x-6 py-2 grid-cols-table items-center text-body text-black border border-purple-light mb-3 last:mb-0"
+                  >
+                    <div className="justify-self-center self-start font-bold">
+                      {i + 1 + (currentPage - 1) * 7}
+                    </div>
+                    <div>
+                      <Image src={image} aspectRatio="4/3" className="rounded-lg" />
+                    </div>
+                    <div>{name}</div>
+                    <div>Rp {numeral(price.start).format('0,0')}</div>
+                    <div>
+                      <Switch
+                        onChange={(e) => handleChangeSwitch.mutate({ e, commodity: culinary })}
+                        checked={active}
+                      />
+                    </div>
+                    <div className="relative">
+                      <MeetBallMore onDelete={() => setItemToDelete({ id, name })} />
+                    </div>
                   </div>
-                  <div>
-                    <Image src={image} aspectRatio="4/3" className="rounded-lg" />
-                  </div>
-                  <div>{name}</div>
-                  <div>Rp {numeral(price.start).format('0,0')}</div>
-                  <div>
-                    <Switch checked={active} />
-                  </div>
-                  <div className="relative">
-                    <MeetBallMore onDelete={() => setItemToDelete({ id, name })} />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
