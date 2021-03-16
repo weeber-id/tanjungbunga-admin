@@ -31,7 +31,7 @@ const Editor: React.ComponentType<EditorProps> = dynamic(
 const CreateKomoditasPage = () => {
   const Router = useRouter();
 
-  const [state, setState] = useState<Omit<Commodity, 'id' | 'slug'>>({
+  const [state, setState] = useState<Omit<Commodity, 'id' | 'slug' | 'active'>>({
     description: '',
     image: '',
     name: '',

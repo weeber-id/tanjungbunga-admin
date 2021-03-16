@@ -11,3 +11,8 @@
   background: transparent;
   border: 1px solid #6e6e76;
 }
+
+.loading-hover:hover div[class*='lds-ring'] div {
+  border: 2px solid #fff;
+  border-color: #fff transparent transparent transparent;
+}

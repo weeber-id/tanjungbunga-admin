@@ -46,6 +46,7 @@ const Button = forwardRef<any, ButtonProps>(
         'w-full': fullWidth,
         [styles['btn']]: !customHeight,
         ['font-medium']: bold,
+        [styles['loading-hover']]: isLoading,
       },
       className
     );
@@ -68,9 +69,14 @@ const Button = forwardRef<any, ButtonProps>(
       );
     }
 
+    const loadingColor = classNames({
+      red: color === 'red' && variant === 'outlined',
+      purple: color === 'default' && variant === 'outlined',
+    }) as 'red' | 'purple';
+
     return (
       <button ref={ref} {...otherProps} className={willBeUsedClassName}>
-        {isLoading && <LoadingAnimation className="mr-1 -ml-3" />}
+        {isLoading && <LoadingAnimation color={loadingColor} className="mr-1 -ml-3" />}
         {children}
       </button>
     );

@@ -95,6 +95,7 @@ export type Commodity = {
   short_description: string;
   description: string;
   operation_time?: OperationTimeState;
+  active: boolean;
 };
 
 export type Travel = {

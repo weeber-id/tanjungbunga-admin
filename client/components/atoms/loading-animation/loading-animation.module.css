@@ -11,9 +11,9 @@
   width: 18px;
   height: 18px;
   margin: 4px;
-  border: 2px solid #fff;
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border: 2px solid #fff;
   border-color: #fff transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
@@ -32,4 +32,12 @@
   100% {
     transform: rotate(360deg);
   }
+}
+.lds-ring.red div {
+  border: 2px solid #f05b4c;
+  border-color: #f05b4c transparent transparent transparent;
+}
+.lds-ring.purple div {
+  border: 2px solid #485fc0;
+  border-color: #485fc0 transparent transparent transparent;
 }

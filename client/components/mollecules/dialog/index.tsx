@@ -10,6 +10,7 @@ interface DialogProps {
   highlightCancelButton?: boolean;
   onSubmit?: () => void;
   onCancel?: () => void;
+  isLoading?: boolean;
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -22,6 +23,7 @@ const Dialog: React.FC<DialogProps> = ({
   highlightCancelButton = false,
   onCancel,
   onSubmit,
+  isLoading,
 }) => {
   return (
     <div className="fixed top-0 left-0 h-full w-full bg-black bg-opacity-20 z-50 flex justify-center items-center p-10">
@@ -39,7 +41,9 @@ const Dialog: React.FC<DialogProps> = ({
                 variant={highlightCancelButton ? 'default' : 'outlined'}
                 color={highlightCancelButton ? 'default' : 'red'}
                 className="mr-3 last:mr-0"
-                onClick={onCancel}
+                onClick={() => {
+                  if (!isLoading && onCancel) onCancel();
+                }}
               >
                 {cancelText}
               </Button>
@@ -48,6 +52,7 @@ const Dialog: React.FC<DialogProps> = ({
               variant={!highlightCancelButton ? 'default' : 'outlined'}
               color={!highlightCancelButton ? 'default' : 'red'}
               onClick={onSubmit}
+              isLoading={isLoading}
             >
               {submitText}
             </Button>
