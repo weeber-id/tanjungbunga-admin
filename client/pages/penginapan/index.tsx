@@ -72,7 +72,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
           Penginapan
         </h5>
         <div className="px-12 mt-6">
-          <Button>+ Tampah Penginapan</Button>
+          <Button href="/penginapan/create">+ Tambah Penginapan</Button>
           <div className="flex items-center justify-between mt-10">
             <Pagination
               currentPage={currentPage}

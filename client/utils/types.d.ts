@@ -10,6 +10,7 @@ export type User = {
 export type Facility = {
   name: string;
   icon: string;
+  id: string;
 };
 
 export type Link = {
