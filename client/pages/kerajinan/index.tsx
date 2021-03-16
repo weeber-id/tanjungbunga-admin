@@ -72,7 +72,7 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
           Belanja
         </h5>
         <div className="px-12 mt-6">
-          <Button>+ Tambah Belanja</Button>
+          <Button href="/kerajinan/create">+ Tambah Belanja</Button>
           <div className="flex items-center justify-between mt-10">
             <Pagination
               onChange={(cp) => setCurrentPage(cp)}

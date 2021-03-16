@@ -79,6 +79,8 @@ export type Handcraft = {
   links: Link[];
   short_description: string;
   description: string;
+  operation_time?: OperationTimeState;
+  active: boolean;
 };
 
 export type Commodity = {
