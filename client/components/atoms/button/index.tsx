@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import Link from 'next/link';
 import { forwardRef } from 'react';
+import LoadingAnimation from '../loading-animation';
 import styles from './button.module.css';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -11,6 +12,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   customHeight?: boolean;
   href?: string;
   isExternal?: boolean;
+  isLoading?: boolean;
 }
 // eslint-disable-next-line
 const Button = forwardRef<any, ButtonProps>(
@@ -25,6 +27,7 @@ const Button = forwardRef<any, ButtonProps>(
       href,
       customHeight = false,
       isExternal,
+      isLoading,
       ...otherProps
     },
     ref
@@ -67,6 +70,7 @@ const Button = forwardRef<any, ButtonProps>(
 
     return (
       <button ref={ref} {...otherProps} className={willBeUsedClassName}>
+        {isLoading && <LoadingAnimation className="mr-1 -ml-3" />}
         {children}
       </button>
     );

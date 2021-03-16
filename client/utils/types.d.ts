@@ -91,9 +91,10 @@ export type Commodity = {
     start: string;
     end: string;
   };
-  links: Link[];
+  links?: Link[];
   short_description: string;
   description: string;
+  operation_time?: OperationTimeState;
 };
 
 export type Travel = {

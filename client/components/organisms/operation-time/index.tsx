@@ -91,7 +91,7 @@ const OperationTime: React.FC<OperationTimeProps> = ({
   onCancel,
   onSave,
 }) => {
-  const [operationTimeState, setOperationTimeState] = useState<OperationTimeState>(state);
+  const [operationTimeState, setOperationTimeState] = useState<OperationTimeState>({ ...state });
 
   const handleChangeDate = (
     date: MaterialUiPickersDate,

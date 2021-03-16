@@ -11,6 +11,8 @@ interface UploadPhotoProps {
   onCancel?: () => void;
   aspectRatio?: '4/3' | '16/9' | '1/1';
   shape?: 'rect' | 'round';
+  isLoading?: boolean;
+  initialPhoto?: string;
 }
 
 const UploadPhoto: React.FC<UploadPhotoProps> = ({
@@ -18,14 +20,16 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
   onUpload,
   aspectRatio = '1/1',
   shape = 'round',
+  isLoading,
+  initialPhoto = '',
 }) => {
   const [isEdit, setEdit] = useState<boolean>(false);
   const [firstTime, setFirstTime] = useState<boolean>(false);
-  const [photo, setPhoto] = useState<string>('');
+  const [photo, setPhoto] = useState<string>(initialPhoto);
   const [blob, setBlob] = useState<Blob>();
   const [cachedCrop, setCachedCrop] = useState({ x: 0, y: 0 });
   const [cropState, setCropState] = useState({
-    image: '',
+    image: initialPhoto,
     crop: { x: 0, y: 0 },
     zoom: 1,
   });
@@ -176,15 +180,21 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
                   accept="image/*"
                 />
               </label>
-              <Button onClick={() => setEdit(true)} className="w-36" color="red">
-                Edit Foto
-              </Button>
+              {photo && (
+                <Button onClick={() => setEdit(true)} className="w-36" color="red">
+                  Edit Foto
+                </Button>
+              )}
             </div>
             <div className="flex justify-end items-center w-full mt-10 mb-6 pr-4">
-              <button onClick={onCancel} className="text-body text-red mr-5 focus:outline-none">
-                Batal
-              </button>
-              <Button onClick={handleUpload}>Upload</Button>
+              {!isLoading && (
+                <button onClick={onCancel} className="text-body text-red mr-5 focus:outline-none">
+                  Batal
+                </button>
+              )}
+              <Button isLoading={isLoading} onClick={handleUpload}>
+                Upload
+              </Button>
             </div>
           </>
         )}
