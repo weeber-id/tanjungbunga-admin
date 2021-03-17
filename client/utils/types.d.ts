@@ -69,6 +69,8 @@ export type Lodging = {
   short_description: string;
   description: string;
   facilities: Facility[] | null;
+  operation_time?: OperationTimeState;
+  facilities_id?: string[];
 };
 
 export type Handcraft = {

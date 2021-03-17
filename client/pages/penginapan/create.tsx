@@ -1,5 +1,6 @@
 import { EditorProps } from 'react-draft-wysiwyg';
 import React, { useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import dynamic from 'next/dynamic';
@@ -16,7 +17,7 @@ import {
   UploadPhoto,
 } from 'components';
 import TextField from 'components/atoms/textfield';
-import { Facility, Handcraft, Link } from 'utils/types';
+import { Facility, Link, Lodging } from 'utils/types';
 import { useMutation, useQuery } from 'react-query';
 import { OperationTime24Hours, urlApi } from 'utils';
 import { useRouter } from 'next/router';
@@ -33,23 +34,28 @@ const Editor: React.ComponentType<EditorProps> = dynamic(
 const CreatePenginapanPage = () => {
   const Router = useRouter();
 
-  const [state, setState] = useState<Omit<Handcraft, 'id' | 'slug' | 'active'>>({
+  const [state, setState] = useState<Omit<Lodging, 'id' | 'slug' | 'active' | 'facilities'>>({
     description: '',
     image: '',
     name: '',
-    price: '',
+    price: {
+      value: '',
+      unit: 'orang',
+    },
     short_description: '',
     links: [],
   });
   const [isUpload, setUpload] = useState<boolean>(false);
+  const [displayImage, setDisplayImage] = useState<string>('');
   const [linksLength, setLinksLength] = useState<Link[]>([{ name: '', link: '' }]);
   const [customHour, setCustomHour] = useState<boolean>(false);
   const [openingHour, setOpeningHour] = useState<Record<string, boolean>>({
     '24hours': true,
     custom: false,
   });
+  const [facilitiesMap, setFacilitiesMap] = useState<Record<string, boolean>>({});
 
-  const { data: facilities } = useQuery<Facility[]>('facilities', () =>
+  const { data: facilities, isLoading } = useQuery<Facility[]>('facilities', () =>
     fetch(urlApi + '/admin/lodging/facilities', {
       credentials: 'include',
     })
@@ -67,7 +73,10 @@ const CreatePenginapanPage = () => {
 
     setState({
       ...state,
-      price: number,
+      price: {
+        unit: 'orang',
+        value: number,
+      },
     });
   };
 
@@ -131,7 +140,7 @@ const CreatePenginapanPage = () => {
     (blob: Blob) => {
       const formdata = new FormData();
       formdata.append('file', blob, uuid());
-      formdata.append('folder_name', 'handcrafts');
+      formdata.append('folder_name', 'lodgings');
 
       return fetch(urlApi + '/admin/media/upload/public', {
         method: 'POST',
@@ -140,7 +149,7 @@ const CreatePenginapanPage = () => {
       });
     },
     {
-      onSuccess: async (data) => {
+      onSuccess: async (data, blob) => {
         const json = await data.json();
 
         const photo = json.data.url;
@@ -151,6 +160,7 @@ const CreatePenginapanPage = () => {
         });
 
         setUpload(false);
+        setDisplayImage(URL.createObjectURL(blob));
       },
     }
   );
@@ -161,9 +171,10 @@ const CreatePenginapanPage = () => {
     if (openingHour['24hours']) body.operation_time = OperationTime24Hours;
 
     body.links = linksLength;
-    body.price = body.price.replace(/\./g, '');
+    body.price.value = body.price.value.replace(/\./g, '');
+    body.facilities_id = Object.keys(facilitiesMap).filter((key) => facilitiesMap[key]);
 
-    return fetch(urlApi + '/admin/handcraft/create', {
+    return fetch(urlApi + '/admin/lodging/create', {
       credentials: 'include',
       method: 'POST',
       body: JSON.stringify(body),
@@ -172,6 +183,15 @@ const CreatePenginapanPage = () => {
       },
     });
   });
+
+  const handleChangeFacilities = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked, value } = e.target;
+
+    setFacilitiesMap({
+      ...facilitiesMap,
+      [value]: checked,
+    });
+  };
 
   return (
     <>
@@ -217,7 +237,7 @@ const CreatePenginapanPage = () => {
               <div className="flex flex-col items-start">
                 <Image
                   className="mb-4"
-                  src={state.image ? state.image : DummyDefaultUpload}
+                  src={state.image ? displayImage : DummyDefaultUpload}
                   aspectRatio="4/3"
                 />
                 <button
@@ -249,7 +269,7 @@ const CreatePenginapanPage = () => {
                       variant="borderless"
                       fullWidth
                       onChange={handleChangePrice}
-                      value={state.price}
+                      value={state.price.value}
                       className="mb-4"
                       autoComplete="off"
                     />
@@ -318,12 +338,31 @@ const CreatePenginapanPage = () => {
             <div className="pb-20 border-b border-black last:border-0">
               <h5 className="text-black font-bold mt-10 mb-6 text-h5">Pilih Fasilitas</h5>
               <div className="grid grid-cols-3 gap-6">
-                {facilities?.map(({ name, icon, id }) => (
-                  <div key={id} className="flex items-center">
-                    <Checkbox style={{ color: '#F05B4C' }} />
-                    <FasilitasIcon src={icon} text={name} />
-                  </div>
-                ))}
+                {isLoading ? (
+                  <>
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                    <Skeleton height={62} />
+                  </>
+                ) : (
+                  facilities?.map(({ name, icon, id }) => (
+                    <div key={id} className="flex items-center">
+                      <Checkbox
+                        value={id}
+                        onChange={handleChangeFacilities}
+                        style={{ color: '#F05B4C' }}
+                        checked={facilitiesMap[id] || false}
+                      />
+                      <FasilitasIcon src={icon} text={name} />
+                    </div>
+                  ))
+                )}
               </div>
             </div>
             <div className="pb-20 border-b border-black last:border-0">
