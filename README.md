@@ -15,11 +15,13 @@ ENV IRON_SESSION_PASSWORD {YOUR_SECRET_PASSWORD} # length must be higher than 32
 
 ```bash
 # yarn package
+
 cd client && yarn build
 cd client && yarn start
 
 
 # if you are using npm
+
 sudo rm -rf client/yarn.lock
 cd client && npm run build
 cd client && npm start
