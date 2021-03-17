@@ -113,3 +113,21 @@ export type Travel = {
   short_description: string;
   description: string;
 };
+
+export type DashboardInfo = {
+  article: {
+    count: number;
+  };
+  handcraft: {
+    count: number;
+  };
+  culinary: {
+    count: number;
+  };
+  lodging: {
+    count: number;
+  };
+  travel: {
+    count: number;
+  };
+};
