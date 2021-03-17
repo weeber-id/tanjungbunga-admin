@@ -1,14 +1,92 @@
 import { DummyDefaultUpload } from 'assets';
-import { Image, Sidebar, UploadPhoto, Textfield, Button } from 'components';
-import { useState } from 'react';
+import { Image, Sidebar, UploadPhoto, Textfield, Button, Dialog } from 'components';
+import React, { useState } from 'react';
+import { useMutation } from 'react-query';
+import { urlApi } from 'utils';
+import { uuid } from 'uuidv4';
+import { User } from 'utils/types';
+import { useRouter } from 'next/router';
 
 const CreateUserPage = () => {
+  const Router = useRouter();
+
   const [isUpload, setUpload] = useState<boolean>(false);
+  const [state, setState] = useState<Omit<User, 'id' | 'isLoggedIn'> & { password: string }>({
+    name: '',
+    profile_picture: '',
+    role: 1,
+    username: '',
+    password: '',
+  });
+  const [displayImage, setDisplayImage] = useState<string>('');
+
+  const handleUpload = useMutation(
+    (blob: Blob) => {
+      const formdata = new FormData();
+      formdata.append('file', blob, uuid());
+      formdata.append('folder_name', 'lodgings');
+
+      return fetch(urlApi + '/admin/media/upload/public', {
+        method: 'POST',
+        body: formdata,
+        credentials: 'include',
+      });
+    },
+    {
+      onSuccess: async (data, blob) => {
+        const json = await data.json();
+
+        const photo = json.data.url;
+
+        setState({
+          ...state,
+          profile_picture: photo,
+        });
+
+        setUpload(false);
+        setDisplayImage(URL.createObjectURL(blob));
+      },
+    }
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+
+    setState({
+      ...state,
+      [name]: value,
+    });
+  };
+
+  const handleSave = useMutation(() => {
+    return fetch(urlApi + '/admin/register', {
+      credentials: 'include',
+      method: 'POST',
+      body: JSON.stringify(state),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  });
 
   return (
     <>
+      {handleSave.isSuccess && (
+        <Dialog
+          singleButton
+          onSubmit={() => Router.push('/manage-users')}
+          heading="Berhasil"
+          message={`${state.name} Berhasil dibuat!`}
+        />
+      )}
       {isUpload && (
-        <UploadPhoto aspectRatio="1/1" shape="round" onCancel={() => setUpload(false)} />
+        <UploadPhoto
+          onUpload={(blob) => handleUpload.mutate(blob)}
+          aspectRatio="1/1"
+          shape="round"
+          onCancel={() => setUpload(false)}
+          isLoading={handleUpload.isLoading}
+        />
       )}
       <div className="grid grid-cols-page h-screen">
         <Sidebar />
@@ -22,7 +100,7 @@ const CreateUserPage = () => {
                 <Image
                   width={224}
                   className="mb-4 rounded-full"
-                  src={DummyDefaultUpload}
+                  src={state.profile_picture ? displayImage : DummyDefaultUpload}
                   aspectRatio="1/1"
                 />
                 <button
@@ -40,6 +118,10 @@ const CreateUserPage = () => {
                   placeholder="Jane Doe"
                   variant="borderless"
                   className="mb-8"
+                  name="name"
+                  onChange={handleChange}
+                  value={state.name}
+                  autoComplete="off"
                 />
                 <Textfield
                   placeholder="janedoe"
@@ -47,12 +129,31 @@ const CreateUserPage = () => {
                   fullWidth
                   labelText="Username :"
                   variant="borderless"
+                  name="username"
+                  onChange={handleChange}
+                  value={state.username}
+                  autoComplete="off"
                 />
-                <Textfield fullWidth labelText="Password :" type="password" variant="borderless" />
+                <Textfield
+                  name="password"
+                  fullWidth
+                  labelText="Password :"
+                  type="password"
+                  variant="borderless"
+                  onChange={handleChange}
+                  value={state.password}
+                  autoComplete="off"
+                />
               </div>
             </div>
             <div className="flex justify-center mt-20">
-              <Button className="w-40">Save</Button>
+              <Button
+                isLoading={handleSave.isLoading}
+                onClick={() => handleSave.mutate()}
+                className="w-40"
+              >
+                Save
+              </Button>
             </div>
           </div>
         </div>
