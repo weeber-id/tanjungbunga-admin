@@ -115,7 +115,7 @@ export type Travel = {
 };
 
 export type DashboardInfo = {
-  article: {
+  article?: {
     count: number;
   };
   handcraft: {
@@ -127,7 +127,7 @@ export type DashboardInfo = {
   lodging: {
     count: number;
   };
-  travel: {
+  travel?: {
     count: number;
   };
 };

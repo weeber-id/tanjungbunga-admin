@@ -4,12 +4,25 @@ import { IconTanjungBunga } from 'assets';
 import { useRouter } from 'next/router';
 import { useUser } from 'hooks';
 import { Button } from 'components/atoms';
+import { urlApi } from 'utils';
 
 const Sidebar = () => {
-  const { user } = useUser({
+  const { user, mutateUser } = useUser({
     redirectTo: '/login',
   });
-  const { asPath } = useRouter();
+  const { asPath, replace } = useRouter();
+
+  const handleLogout = async () => {
+    await fetch(urlApi + '/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    const res = await fetch('/api/logout', { method: 'POST' });
+
+    mutateUser(await res.json());
+
+    replace('/login');
+  };
 
   return (
     <div className="flex flex-col h-full bg-blue-light">
@@ -99,7 +112,10 @@ const Sidebar = () => {
           </Link>
         </div>
       </div>
-      <button className="h-20 w-full text-white mt-auto bg-purple-light flex justify-center items-center focus:outline-none">
+      <button
+        onClick={handleLogout}
+        className="h-20 w-full text-white mt-auto bg-purple-light flex justify-center items-center focus:outline-none"
+      >
         Logout
       </button>
     </div>

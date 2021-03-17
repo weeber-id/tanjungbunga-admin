@@ -45,10 +45,10 @@ const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           </h5>
           <div className="px-12 mt-6">
             <div className="grid grid-cols-4 mb-20 gap-x-6 mt-10">
-              {user?.role === 0 && <CardDashboard title="Artikel" value={article.count} />}
+              {user?.role === 0 && <CardDashboard title="Artikel" value={article?.count} />}
             </div>
             <div className="grid grid-cols-4 gap-x-6">
-              {user?.role === 0 && <CardDashboard title="Wisata" value={travel.count} />}
+              {user?.role === 0 && <CardDashboard title="Wisata" value={travel?.count} />}
               <CardDashboard title="Penginapan" value={lodging.count} />
               <CardDashboard title="Kuliner" value={culinary.count} />
               <CardDashboard title="Produk Belanja" value={handcraft.count} />

@@ -46,11 +46,10 @@ const LoginPage = () => {
       credentials: 'include',
     });
 
-    const data = await response.json();
+    await response.json();
 
     if (res.ok) {
-      if (data.data.role === 0) router.replace('/');
-      else router.replace('/penginapan');
+      router.replace('/');
     }
   };
 
