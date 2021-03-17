@@ -6,7 +6,7 @@ type options = {
 
 export const useMedia = (options: options) => {
   const [isTrue, setTrue] = useState<boolean>(false);
-  const { query } = options;
+  const { query = '' } = options;
 
   useEffect(() => {
     // server side rendering doesn't have window object

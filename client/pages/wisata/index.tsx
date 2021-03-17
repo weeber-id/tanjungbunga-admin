@@ -25,6 +25,17 @@ export const getServerSideProps: GetServerSideProps<WisataPageProps> = async ({ 
 
   const data = await res.json();
 
+  if (!res.ok)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+      props: {
+        data: undefined,
+      },
+    };
+
   return {
     props: {
       data: data.data,

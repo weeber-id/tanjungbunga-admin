@@ -34,6 +34,14 @@ export const getServerSideProps: GetServerSideProps<ManageUsersPageProps> = asyn
   const dataAdmin = await resAdmin.json();
   const dataSeller = await resSeller.json();
 
+  if (!resAdmin.ok || !resSeller.ok)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
   return {
     props: {
       admin: dataAdmin.data,

@@ -6,7 +6,7 @@ import { urlApi } from 'utils';
 import { DashboardInfo } from 'utils/types';
 
 interface DashboardPageProps {
-  data: DashboardInfo;
+  data?: DashboardInfo;
 }
 
 export const getServerSideProps: GetServerSideProps<DashboardPageProps> = async ({ req }) => {
@@ -19,6 +19,14 @@ export const getServerSideProps: GetServerSideProps<DashboardPageProps> = async 
 
   const data = await res.json();
 
+  if (!res.ok)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
   return {
     props: {
       data: data.data,
@@ -28,8 +36,6 @@ export const getServerSideProps: GetServerSideProps<DashboardPageProps> = async 
 
 const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ data }) => {
   const { user } = useUser({ redirectTo: '/login' });
-
-  const { article, culinary, handcraft, lodging, travel } = data;
 
   return (
     <>
@@ -45,13 +51,13 @@ const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
           </h5>
           <div className="px-12 mt-6">
             <div className="grid grid-cols-4 mb-20 gap-x-6 mt-10">
-              {user?.role === 0 && <CardDashboard title="Artikel" value={article?.count} />}
+              {user?.role === 0 && <CardDashboard title="Artikel" value={data?.article?.count} />}
             </div>
             <div className="grid grid-cols-4 gap-x-6">
-              {user?.role === 0 && <CardDashboard title="Wisata" value={travel?.count} />}
-              <CardDashboard title="Penginapan" value={lodging.count} />
-              <CardDashboard title="Kuliner" value={culinary.count} />
-              <CardDashboard title="Produk Belanja" value={handcraft.count} />
+              {user?.role === 0 && <CardDashboard title="Wisata" value={data?.travel?.count} />}
+              <CardDashboard title="Penginapan" value={data?.lodging.count} />
+              <CardDashboard title="Kuliner" value={data?.culinary.count} />
+              <CardDashboard title="Produk Belanja" value={data?.handcraft.count} />
             </div>
           </div>
         </div>

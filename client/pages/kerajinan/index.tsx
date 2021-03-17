@@ -32,6 +32,14 @@ export const getServerSideProps: GetServerSideProps<KerajinanPageProps> = async 
 
   const data = await res.json();
 
+  if (!res.ok)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
   return {
     props: {
       data: data.data,
