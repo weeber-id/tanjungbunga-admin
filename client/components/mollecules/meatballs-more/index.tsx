@@ -27,7 +27,7 @@ const MeetBallMore: React.FC<MeetBallMoreProps> = ({ onDelete, onEdit }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative z-40">
       <button
         ref={triggerRef}
         onClick={() => setShow((show) => !show)}
@@ -39,6 +39,7 @@ const MeetBallMore: React.FC<MeetBallMoreProps> = ({ onDelete, onEdit }) => {
         <div
           ref={boxRef}
           className="absolute top-7 right-6 bg-white text-body shadow-lg w-40 rounded-md overflow-hidden"
+          style={{ zIndex: 40 }}
         >
           <button
             onClick={handleEdit}

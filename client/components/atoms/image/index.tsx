@@ -31,6 +31,7 @@ const Image: React.FC<ImageProps> = ({
           className="absolute top-0 left-0 w-full h-full"
           src={src}
           alt={alt}
+          loading="lazy"
         />
       </div>
     </div>

@@ -48,7 +48,7 @@ export function getCroppedImg(
       (blob) => {
         if (blob) resolve(blob);
       },
-      'image/jpeg',
+      'image/png',
       1
     );
   });

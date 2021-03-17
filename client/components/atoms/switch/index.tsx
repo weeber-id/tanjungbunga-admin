@@ -7,9 +7,17 @@ interface SwitchProps {
   checked?: boolean;
   name?: string;
   value?: string;
+  defaultChecked?: boolean;
 }
 
-const Switch: React.FC<SwitchProps> = ({ className, onChange, checked, name, value }) => {
+const Switch: React.FC<SwitchProps> = ({
+  className,
+  onChange,
+  checked,
+  name,
+  value,
+  defaultChecked,
+}) => {
   return (
     <label className={classNames(styles.switch, className)}>
       <input
@@ -19,6 +27,7 @@ const Switch: React.FC<SwitchProps> = ({ className, onChange, checked, name, val
         onChange={onChange}
         className={styles.input}
         type="checkbox"
+        defaultChecked={defaultChecked}
       />
       <span className={classNames(styles.slider, styles.round)}></span>
     </label>

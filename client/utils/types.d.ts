@@ -71,6 +71,7 @@ export type Lodging = {
   facilities: Facility[] | null;
   operation_time?: OperationTimeState;
   facilities_id?: string[];
+  active: boolean;
 };
 
 export type Handcraft = {
