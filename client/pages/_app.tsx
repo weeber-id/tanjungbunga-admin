@@ -5,7 +5,16 @@ import DayjsUtils from '@date-io/dayjs';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import 'react-input-range/lib/css/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import '../styles/globals.css';
+(async () => {
+  if (process.env.NODE_ENV === 'development') {
+    await require('../styles/build.css');
+  } else {
+    await require('../styles/globals.css');
+  }
+})();
+
+// import '../styles/globals.css';
+// import '../styles/build.css';
 
 const queryClient = new QueryClient();
 

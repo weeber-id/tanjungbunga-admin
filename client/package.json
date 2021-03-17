@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon",
+    "nodemon": "nodemon",
     "build": "next build",
     "start": "next start",
-    "next:dev": "next dev"
+    "next:dev": "next dev",
+    "watch:css": "postcss styles/globals.css -o styles/build.css --verbose -w",
+    "dev": "concurrently \"yarn:nodemon\" \"yarn:watch:css\" \"yarn:tailwind:watch\"",
+    "tailwind:watch": "set TAILWIND_MODE=watch"
   },
   "dependencies": {
     "@date-io/dayjs": "1.x",
@@ -19,8 +22,9 @@
     "@types/humanize-duration": "^3.18.1",
     "@types/numeral": "^2.0.1",
     "@types/react-draft-wysiwyg": "^1.13.1",
-    "autoprefixer": "^10.0.4",
+    "autoprefixer": "^10.2.5",
     "classnames": "^2.2.6",
+    "concurrently": "^6.0.0",
     "dayjs": "^1.10.4",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
@@ -30,7 +34,8 @@
     "next-images": "^1.7.0",
     "next-iron-session": "^4.1.12",
     "numeral": "^2.0.6",
-    "postcss": "^8.1.10",
+    "postcss": "^8.2.8",
+    "postcss-cli": "^8.3.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-draft-wysiwyg": "^1.14.5",
@@ -39,7 +44,7 @@
     "react-loading-skeleton": "^2.2.0",
     "react-query": "^3.12.1",
     "swr": "^0.5.2",
-    "tailwindcss": "^2.0.2",
+    "tailwindcss": "^2.0.3",
     "ts-node": "^9.1.1",
     "uuidv4": "^6.2.6"
   },
