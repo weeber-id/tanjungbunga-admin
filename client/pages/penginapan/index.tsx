@@ -127,7 +127,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
         <Dialog
           singleButton
           heading="Berhasil"
-          message={`${itemToDelete?.name ?? 'Komoditas'} berhasil dihapus`}
+          message={`${itemToDelete?.name ?? 'Penginapan'} berhasil dihapus`}
           onSubmit={() => {
             handleDelete.reset();
           }}
@@ -135,9 +135,10 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
       )}
       {itemToDelete && (
         <Dialog
+          submitText="Hapus"
           highlightCancelButton
           headerColor="red"
-          heading="Hapus Komoditas"
+          heading="Hapus Penginapan"
           message={`Anda yakin ingin menghapus ${itemToDelete?.name ?? ''}`}
           onCancel={() => setItemToDelete(undefined)}
           isLoading={handleDelete.isLoading}

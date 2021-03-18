@@ -17,7 +17,7 @@ const Sidebar = () => {
       method: 'POST',
       credentials: 'include',
     });
-    const res = await fetch('/api/logout', { method: 'POST' });
+    const res = await fetch('/api/logout-client', { method: 'POST' });
 
     mutateUser(await res.json());
 

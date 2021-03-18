@@ -88,7 +88,7 @@ const WisataPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps
           Wisata
         </h5>
         <div className="px-12 mt-6">
-          <Button>+ Tampah Wisata</Button>
+          <Button>+ Tambah Wisata</Button>
           <div className="flex items-center justify-between mt-10">
             <Pagination
               currentPage={currentPage}

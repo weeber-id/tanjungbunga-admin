@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps<KerajinanPageProps> = async 
   const headers = new Headers();
   if (req.headers.cookie) headers.append('cookie', req.headers.cookie);
 
-  const res = await fetch(urlApi + '/admin/handcrafts?page=1&content_per_page=7', {
+  const res = await fetch(urlApi + '/admin/handcrafts?page=1&content_per_page=5', {
     headers: headers,
   });
 
@@ -65,7 +65,7 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
       if (queryParams.length > 0) queryParams[0] = `&${queryParams[0]}`;
 
       return fetch(
-        urlApi + `/admin/handcrafts?page=${currentPage}&content_per_page=7${queryParams.join('&')}`,
+        urlApi + `/admin/handcrafts?page=${currentPage}&content_per_page=5${queryParams.join('&')}`,
         {
           credentials: 'include',
         }
@@ -135,6 +135,7 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
       )}
       {itemToDelete && (
         <Dialog
+          submitText="Hapus"
           highlightCancelButton
           headerColor="red"
           heading="Hapus Kerajinan"
@@ -183,7 +184,7 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                     className="grid gap-x-6 py-2 grid-cols-table items-center text-body text-black border border-purple-light mb-3 last:mb-0"
                   >
                     <div className="justify-self-center self-start font-bold">
-                      {i + 1 + (currentPage - 1) * 7}
+                      {i + 1 + (currentPage - 1) * 5}
                     </div>
                     <div>
                       <Image src={image} aspectRatio="4/3" className="rounded-lg" />

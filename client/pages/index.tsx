@@ -47,7 +47,7 @@ const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <Sidebar />
         <div className="overflow-y-auto pb-10 min-w-[900px]">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
-            Wisata
+            Dasboard
           </h5>
           <div className="px-12 mt-6">
             <div className="grid grid-cols-4 mb-20 gap-x-6 mt-10">
