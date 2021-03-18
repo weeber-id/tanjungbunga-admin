@@ -1,5 +1,3 @@
-import Sidebar from './sidebar';
-import UploadPhoto from './upload-photo';
-import OperationTime from './operation-time';
-
-export { Sidebar, UploadPhoto, OperationTime };
+export { default as UploadPhoto } from './upload-photo';
+export { default as OperationTime } from './operation-time';
+export { default as Sidebar } from './sidebar';

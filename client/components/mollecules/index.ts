@@ -1,8 +1,6 @@
-import Pagination from './pagination';
-import MeetBallMore from './meatballs-more';
-import Dialog from './dialog';
-import UserAccount from './user-account';
-import FasilitasIcon from './fasilitas-icon';
-import CardDashboard from './card-dashboard';
-
-export { Pagination, MeetBallMore, Dialog, UserAccount, FasilitasIcon, CardDashboard };
+export { default as Pagination } from './pagination';
+export { default as MeetBallMore } from './meatballs-more';
+export { default as Dialog } from './dialog';
+export { default as UserAccount } from './user-account';
+export { default as FasilitasIcon } from './fasilitas-icon';
+export { default as CardDashboard } from './card-dashboard';
