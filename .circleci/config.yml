@@ -18,7 +18,7 @@ jobs:
           command: |
             echo 'export VERSION=${CIRCLE_SHA1:0:4}' >> $BASH_ENV
             source $BASH_ENV
-            echo 'export IMAGE_NAME=${IMAGE_NAME}:-${CIRCLE_BRANCH}-${VERSION}' >> $BASH_ENV 
+            echo 'export IMAGE_NAME=${IMAGE_NAME}:${CIRCLE_BRANCH}-${VERSION}' >> $BASH_ENV 
 
       - run:
           name: Build Docker Image
