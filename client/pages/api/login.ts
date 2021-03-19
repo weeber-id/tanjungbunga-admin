@@ -1,5 +1,5 @@
 import { Handler } from 'next-iron-session';
-import { urlApi, withSession } from 'utils';
+import { urlApi, withSession } from '../../utils';
 
 const handler: Handler = async (req, res) => {
   const { username, password } = await req.body;

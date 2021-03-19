@@ -1,5 +1,5 @@
 import { Handler } from 'next-iron-session';
-import { withSession } from 'utils';
+import { withSession } from '../../utils';
 
 const handler: Handler = async (req, res) => {
   req.session.destroy();

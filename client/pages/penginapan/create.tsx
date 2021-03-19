@@ -320,6 +320,7 @@ const CreatePenginapanPage = () => {
                     'emoji',
                     'remove',
                     'history',
+                    'image',
                   ],
                 }}
                 editorClassName="border border-grey-light h-64"
