@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: docker:19.03.13
     environment:
-      IMAGE_NAME: bayu3490/bizhub-website
+      IMAGE_NAME: bayu3490/tanjungbunga-dashboard
     working_directory: /app
     resource_class: small
     steps:
