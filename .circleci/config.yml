@@ -43,6 +43,7 @@ jobs:
           command: | 
             source $BASH_ENV
             docker push $IMAGE_NAME
+            echo $IMAGE_NAME
 
 workflows:
   version: 2
