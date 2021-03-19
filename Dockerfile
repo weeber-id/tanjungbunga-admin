@@ -3,7 +3,6 @@ FROM node:12.14.1-alpine3.10
 WORKDIR /app
 
 COPY client/ ./
-RUN rm yarn.lock
 RUN yarn install
 
 ENV NODE_ENV=production
