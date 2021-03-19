@@ -30,7 +30,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     // set iron session
-    const res = await fetch('/api/login-client', {
+    const res = await fetch('/api-client/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(state),
