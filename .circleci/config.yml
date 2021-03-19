@@ -58,4 +58,4 @@ workflows:
           context: weeber-context
           filters:
             branches:
-              only: ci/cd
+              only: cicd
