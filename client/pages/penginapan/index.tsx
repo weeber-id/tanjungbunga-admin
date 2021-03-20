@@ -14,6 +14,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { urlApi } from 'utils';
 import { Lodging } from 'utils/types';
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface PenginapanPageProps {
   data: {
@@ -50,6 +51,8 @@ export const getServerSideProps: GetServerSideProps<PenginapanPageProps> = async
 const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   data,
 }) => {
+  const Router = useRouter();
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchCache, setSearchCache] = useState<string>('');
   const [search, setSearch] = useState<string>('');
@@ -177,7 +180,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                 <div></div>
               </div>
               {lodgings?.data?.map((lodging, i) => {
-                const { id, name, price, image, active } = lodging;
+                const { id, name, price, image, active, slug } = lodging;
                 return (
                   <div
                     key={id}
@@ -206,7 +209,10 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                       />
                     </div>
                     <div className="relative">
-                      <MeetBallMore onDelete={() => setItemToDelete(lodging)} />
+                      <MeetBallMore
+                        onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                        onDelete={() => setItemToDelete(lodging)}
+                      />
                     </div>
                   </div>
                 );

@@ -36,8 +36,6 @@ const LoginPage = () => {
       body: JSON.stringify(state),
     });
 
-    await mutateUser(await res.json());
-
     // for set cookie from backend api
     const response = await fetch(urlApi + '/login', {
       method: 'POST',
@@ -49,6 +47,7 @@ const LoginPage = () => {
     await response.json();
 
     if (res.ok) {
+      await mutateUser(await res.json());
       router.replace('/');
     }
   };

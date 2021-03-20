@@ -44,15 +44,17 @@ const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="grid h-screen grid-cols-page">
-        <Sidebar />
+        {data && <Sidebar />}
         <div className="overflow-y-auto pb-10 min-w-[900px]">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
             Dasboard
           </h5>
           <div className="px-12 mt-6">
-            <div className="grid grid-cols-4 mb-20 gap-x-6 mt-10">
-              {user?.role === 0 && <CardDashboard title="Artikel" value={data?.article?.count} />}
-            </div>
+            {user?.role === 0 && (
+              <div className="grid grid-cols-4 mb-20 gap-x-6 mt-10">
+                <CardDashboard title="Artikel" value={data?.article?.count} />
+              </div>
+            )}
             <div className="grid grid-cols-4 gap-x-6">
               {user?.role === 0 && <CardDashboard title="Wisata" value={data?.travel?.count} />}
               <CardDashboard title="Penginapan" value={data?.lodging.count} />
