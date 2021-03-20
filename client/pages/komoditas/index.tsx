@@ -9,6 +9,7 @@ import {
   Textfield,
 } from 'components';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
 import numeral from 'numeral';
 import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -50,6 +51,8 @@ export const getServerSideProps: GetServerSideProps<KomoditasPageProps> = async 
 const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   data,
 }) => {
+  const Router = useRouter();
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchCache, setSearchCache] = useState<string>('');
   const [search, setSearch] = useState<string>('');
@@ -177,7 +180,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                 <div></div>
               </div>
               {culinaries?.data?.map((culinary, i) => {
-                const { id, name, price, image, active } = culinary;
+                const { id, name, price, image, active, slug } = culinary;
 
                 return (
                   <div
@@ -199,7 +202,10 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                       />
                     </div>
                     <div className="relative">
-                      <MeetBallMore onDelete={() => setItemToDelete({ id, name })} />
+                      <MeetBallMore
+                        onEdit={() => Router.push(`/komoditas/edit?id=${id}&slug=${slug}`)}
+                        onDelete={() => setItemToDelete({ id, name })}
+                      />
                     </div>
                   </div>
                 );
