@@ -9,6 +9,7 @@ import {
   Dialog,
 } from 'components';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
 import numeral from 'numeral';
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -50,6 +51,7 @@ export const getServerSideProps: GetServerSideProps<KerajinanPageProps> = async 
 const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
   data,
 }) => {
+  const Router = useRouter();
   const queryClient = useQueryClient();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -177,7 +179,7 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                 <div></div>
               </div>
               {handcrafts?.data?.map((handcraft, i) => {
-                const { id, image, name, price, active } = handcraft;
+                const { id, image, name, price, active, slug } = handcraft;
                 return (
                   <div
                     key={id}
@@ -198,7 +200,10 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                       />
                     </div>
                     <div className="relative">
-                      <MeetBallMore onDelete={() => setItemToDelete({ id, name })} />
+                      <MeetBallMore
+                        onEdit={() => Router.push(`/kerajinan/edit?id=${id}&slug=${slug}`)}
+                        onDelete={() => setItemToDelete({ id, name })}
+                      />
                     </div>
                   </div>
                 );

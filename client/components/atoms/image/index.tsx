@@ -1,4 +1,6 @@
 import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+import { LoadingAnimation } from '..';
 
 interface ImageProps {
   src?: string;
@@ -8,6 +10,7 @@ interface ImageProps {
   className?: string;
   objectFit?: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
   objectPosition?: string;
+  lazyLoading?: boolean;
 }
 
 const Image: React.FC<ImageProps> = ({
@@ -18,15 +21,29 @@ const Image: React.FC<ImageProps> = ({
   className,
   objectFit,
   objectPosition,
+  lazyLoading,
 }) => {
+  const [loading, setLoading] = useState(true);
   const AR = aspectRatio.split('/');
 
   const paddingTop = `${(Number(AR[1]) / Number(AR[0])) * 100}%`;
 
+  useEffect(() => {
+    setLoading(true);
+  }, [src]);
+
   return (
     <div className={classNames('w-full overflow-hidden', className)} style={{ width }}>
       <div style={{ paddingTop }} className={classNames('relative w-full overflow-hidden')}>
+        {lazyLoading && loading && (
+          <div className="absolute z-40 top-0 left-0 bg-blue-light w-full h-full flex justify-center items-center">
+            <LoadingAnimation color="purple" />
+          </div>
+        )}
         <img
+          onLoad={() => {
+            if (lazyLoading) setLoading(false);
+          }}
           style={{ objectPosition, objectFit }}
           className="absolute top-0 left-0 w-full h-full"
           src={src}
