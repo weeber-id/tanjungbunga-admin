@@ -78,7 +78,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
     image: data.image,
     name: data.name,
     price: {
-      value: data.price.value,
+      value: addCommas(removeNonNumeric(data.price.value)),
       unit: 'orang',
     },
     short_description: data.short_description,
@@ -138,8 +138,12 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
       .then((data) => data.data)
   );
 
-  const addCommas = (num: string) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  const removeNonNumeric = (num: string) => num.toString().replace(/[^0-9]/g, '');
+  function addCommas(num: string) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+  function removeNonNumeric(num: string) {
+    return num.toString().replace(/[^0-9]/g, '');
+  }
 
   const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -319,7 +323,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                   onClick={() => setUpload(true)}
                   className="text-body mb-2 hover:text-purple-light"
                 >
-                  Upload foto
+                  {data.image ? 'Edit foto' : 'Upload foto'}
                 </button>
                 {state.image && (
                   <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
@@ -384,7 +388,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                 </div>
               </div>
             </div>
-            <div className="flex items-center text-h5 border-b border-grey">
+            <div className="flex items-center text-h5 border-b border-grey mt-20">
               <button
                 onClick={() => setActive('edit')}
                 className={classNames(
