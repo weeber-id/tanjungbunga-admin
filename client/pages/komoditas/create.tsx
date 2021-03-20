@@ -218,6 +218,7 @@ const CreateKomoditasPage = () => {
                   className="mb-4"
                   src={state.image ? state.image : DummyDefaultUpload}
                   aspectRatio="4/3"
+                  lazyLoading
                 />
                 <button
                   onClick={() => setUpload(true)}
