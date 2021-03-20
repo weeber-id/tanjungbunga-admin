@@ -278,7 +278,7 @@ const EditKomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
         <Sidebar />
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
-            Tambah Komoditas
+            Edit Komoditas
           </h5>
           <div className="px-12 py-10">
             <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-6">
