@@ -35,6 +35,11 @@ const Sidebar = () => {
               <Button href="/manage-users">Kelola User</Button>
             </>
           )}
+          {user?.role === 1 && (
+            <Button className="mt-5" href="/akun-saya">
+              Akun Saya
+            </Button>
+          )}
         </div>
       </div>
       {user?.isLoggedIn && (
@@ -69,7 +74,11 @@ const Sidebar = () => {
             </div>
           </div>
           <div className="px-5">
-            <div className="py-6 px-2 text-body flex flex-col">
+            <div
+              className={classNames('py-6 px-2 text-body flex flex-col', {
+                'border-b border-purple': user.role === 0,
+              })}
+            >
               {user?.role === 0 && (
                 <Link href="/wisata">
                   <a
@@ -112,6 +121,22 @@ const Sidebar = () => {
                   Kerajinan/Belanja
                 </a>
               </Link>
+            </div>
+          </div>
+          <div className="px-5">
+            <div className="py-6 px-2 text-body">
+              {user?.role === 0 && (
+                <Link href="/about">
+                  <a
+                    className={classNames(
+                      'hover:text-red mb-5',
+                      asPath === '/about' ? 'text-red' : 'text-purple-light '
+                    )}
+                  >
+                    Tentang
+                  </a>
+                </Link>
+              )}
             </div>
           </div>
         </>

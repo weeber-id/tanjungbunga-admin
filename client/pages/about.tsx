@@ -7,7 +7,7 @@ import { uuid } from 'uuidv4';
 import { User } from 'utils/types';
 import { useRouter } from 'next/router';
 
-const CreateUserPage = () => {
+const AboutPage = () => {
   const Router = useRouter();
 
   const [isUpload, setUpload] = useState<boolean>(false);
@@ -82,7 +82,7 @@ const CreateUserPage = () => {
       {isUpload && (
         <UploadPhoto
           onUpload={(blob) => handleUpload.mutate(blob)}
-          aspectRatio="1/1"
+          aspectRatio="3/4"
           shape="round"
           onCancel={() => setUpload(false)}
           isLoading={handleUpload.isLoading}
@@ -92,16 +92,18 @@ const CreateUserPage = () => {
         <Sidebar />
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
-            Tambah Seller
+            Tentang
           </h5>
           <div className="px-12 py-10">
             <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-16">
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-start">
+                <h5 className="text-h5 font-bold mb-4">Sambutan</h5>
                 <Image
                   width={224}
-                  className="mb-4 rounded-full"
+                  className="mb-4"
                   src={state.profile_picture ? displayImage : DummyDefaultUpload}
-                  aspectRatio="1/1"
+                  aspectRatio="3/4"
+                  lazyLoading
                 />
                 <button
                   onClick={() => setUpload(true)}
@@ -109,7 +111,9 @@ const CreateUserPage = () => {
                 >
                   Upload foto
                 </button>
-                <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
+                {state.profile_picture && (
+                  <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
+                )}
               </div>
               <div className="flex flex-col">
                 <Textfield
@@ -127,23 +131,21 @@ const CreateUserPage = () => {
                   placeholder="janedoe"
                   className="mb-8"
                   fullWidth
-                  labelText="Username :"
+                  labelText="Jabatan :"
                   variant="borderless"
                   name="username"
                   onChange={handleChange}
                   value={state.username}
                   autoComplete="off"
                 />
-                <Textfield
-                  name="password"
-                  fullWidth
-                  labelText="Password :"
-                  type="password"
-                  variant="borderless"
-                  onChange={handleChange}
-                  value={state.password}
-                  autoComplete="off"
-                />
+                <div>
+                  <p className="text-body text-black mb-1">Isi Sambutan :</p>
+                  <textarea
+                    maxLength={750}
+                    className="border border-purple-light rounded-md resize-none w-full h-64"
+                  />
+                  <div className="text-body text-red text-right">0 / 750 Karakter</div>
+                </div>
               </div>
             </div>
             <div className="flex justify-center mt-20">
@@ -162,4 +164,4 @@ const CreateUserPage = () => {
   );
 };
 
-export default CreateUserPage;
+export default AboutPage;

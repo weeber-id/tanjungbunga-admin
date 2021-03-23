@@ -5,7 +5,7 @@ import { LoadingAnimation } from '..';
 interface ImageProps {
   src?: string;
   alt?: string;
-  aspectRatio?: '4/3' | '16/9' | '1/1';
+  aspectRatio?: '4/3' | '16/9' | '1/1' | '3/4';
   width?: number;
   className?: string;
   objectFit?: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';

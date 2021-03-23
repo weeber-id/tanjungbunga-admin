@@ -9,7 +9,7 @@ import { getCroppedImg } from 'utils/get-cropped-image';
 interface UploadPhotoProps {
   onUpload?: (blob: Blob) => void;
   onCancel?: () => void;
-  aspectRatio?: '4/3' | '16/9' | '1/1';
+  aspectRatio?: '4/3' | '16/9' | '1/1' | '3/4';
   shape?: 'rect' | 'round';
   isLoading?: boolean;
   initialPhoto?: string;
