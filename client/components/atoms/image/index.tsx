@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LoadingAnimation } from '..';
 
 interface ImageProps {
@@ -29,7 +29,14 @@ const Image: React.FC<ImageProps> = ({
   const paddingTop = `${(Number(AR[1]) / Number(AR[0])) * 100}%`;
 
   useEffect(() => {
-    setLoading(true);
+    setLoading(false);
+  }, []);
+
+  const count = useRef(0);
+
+  useEffect(() => {
+    if (count.current > 0) setLoading(true);
+    else count.current = 1;
   }, [src]);
 
   return (

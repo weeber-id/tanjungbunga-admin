@@ -1,31 +1,31 @@
-import { EditorProps } from 'react-draft-wysiwyg';
-import React, { useState } from 'react';
-import Skeleton from 'react-loading-skeleton';
-import { convertToRaw, convertFromHTML, EditorState, ContentState } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
-import dynamic from 'next/dynamic';
+import { Checkbox } from '@material-ui/core';
 import { DummyDefaultUpload, IconAdd, IconTrash } from 'assets';
+import classNames from 'classnames';
 import {
   Button,
   Dialog,
+  DiscussionRow,
   FasilitasIcon,
   Image,
   OperationTime,
-  Pagination,
   Radio,
   Sidebar,
   Textfield,
   UploadPhoto,
 } from 'components';
 import TextField from 'components/atoms/textfield';
-import { Facility, Link, Lodging } from 'utils/types';
+import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { EditorProps } from 'react-draft-wysiwyg';
+import Skeleton from 'react-loading-skeleton';
 import { useMutation, useQuery } from 'react-query';
 import { OperationTime24Hours, urlApi } from 'utils';
-import { useRouter } from 'next/router';
+import { Discussion, Facility, Link, Lodging } from 'utils/types';
 import { uuid } from 'uuidv4';
-import { Checkbox } from '@material-ui/core';
-import classNames from 'classnames';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const Editor: React.ComponentType<EditorProps> = dynamic(
   // eslint-disable-next-line
@@ -73,6 +73,25 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
 }) => {
   const Router = useRouter();
 
+  if (!data) {
+    data = {
+      id: '',
+      image: '',
+      description: '',
+      price: {
+        value: '',
+        unit: '',
+      },
+      slug: '',
+      active: true,
+      facilities: [],
+      short_description: '',
+      links: [],
+      name: '',
+      facilities_id: [],
+    };
+  }
+
   const [state, setState] = useState<Omit<Lodging, 'id' | 'slug' | 'active' | 'facilities'>>({
     description: data.description,
     image: data.image,
@@ -119,13 +138,16 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
 
     return map;
   });
-  const [textEditor, setTexteditor] = useState<EditorState>(() => {
-    const blocksFromHTML = convertFromHTML(data.description);
-    const state = ContentState.createFromBlockArray(
-      blocksFromHTML.contentBlocks,
-      blocksFromHTML.entityMap
-    );
-    return EditorState.createWithContent(state);
+  const [textEditor, setTexteditor] = useState<EditorState | undefined>(() => {
+    if (process.browser) {
+      const blocksFromHTML = convertFromHTML(data.description);
+      const state = ContentState.createFromBlockArray(
+        blocksFromHTML.contentBlocks,
+        blocksFromHTML.entityMap
+      );
+      return EditorState.createWithContent(state);
+    }
+    return undefined;
   });
 
   const [active, setActive] = useState<'edit' | 'tanya-jawab'>('edit');
@@ -136,6 +158,20 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
     })
       .then((res) => res.json())
       .then((data) => data.data)
+  );
+
+  const { data: discussions, isLoading: discussionLoading } = useQuery<Discussion[]>(
+    'discussions',
+    () => {
+      return fetch(
+        urlApi + `/admin/discussion?content_name=lodging&content_id=${data.id}&show_answer=true`,
+        {
+          credentials: 'include',
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => data.data);
+    }
   );
 
   function addCommas(num: string) {
@@ -271,6 +307,8 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
       [value]: checked,
     });
   };
+
+  if (Router.isFallback) return <div>Fallback...</div>;
 
   return (
     <>
@@ -538,7 +576,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                 <div>
                   <div
                     style={{ gridTemplateColumns: '80px 250px 1fr 200px' }}
-                    className="grid bg-blue-light mb-2.5 text-black py-5 px-4"
+                    className="grid bg-blue-light mb-2.5 text-black py-5 px-4 gap-x-4"
                   >
                     <div>No.</div>
                     <div>Email</div>
@@ -546,9 +584,25 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                     <div>Jawaban</div>
                   </div>
                 </div>
-                <div className="flex justify-center mt-16">
-                  <Pagination />
+                <div>
+                  {discussionLoading ? (
+                    <Skeleton count={4} height={130} />
+                  ) : (
+                    discussions?.map(({ id, ...otherProps }, i) => (
+                      <DiscussionRow
+                        key={id}
+                        numberOrder={i + 1}
+                        question_id={id}
+                        {...otherProps}
+                        name={data.name}
+                        content_name="lodging"
+                      />
+                    ))
+                  )}
                 </div>
+                {/* <div className="flex justify-center mt-16">
+                  <Pagination />
+                </div> */}
               </div>
             )}
             {active === 'edit' && (

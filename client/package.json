@@ -8,7 +8,7 @@
     "start": "next start",
     "next:dev": "next dev",
     "watch:css": "postcss styles/globals.css -o styles/build.css --verbose -w",
-    "dev": "concurrently \"yarn:nodemon\" \"yarn:watch:css\" \"yarn:tailwind:watch\"",
+    "dev": "concurrently \"yarn:nodemon\" \"yarn:tailwind:watch\"",
     "tailwind:watch": "set TAILWIND_MODE=watch"
   },
   "dependencies": {

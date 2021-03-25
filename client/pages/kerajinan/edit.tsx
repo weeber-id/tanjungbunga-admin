@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import {
   Button,
   Dialog,
+  DiscussionRow,
   Image,
   OperationTime,
-  Pagination,
   Radio,
   Sidebar,
   Textfield,
@@ -19,9 +19,10 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { EditorProps } from 'react-draft-wysiwyg';
-import { useMutation } from 'react-query';
+import Skeleton from 'react-loading-skeleton';
+import { useMutation, useQuery } from 'react-query';
 import { OperationTime24Hours, urlApi } from 'utils';
-import { Handcraft, Link } from 'utils/types';
+import { Discussion, Handcraft, Link } from 'utils/types';
 import { uuid } from 'uuidv4';
 
 const Editor: React.ComponentType<EditorProps> = dynamic(
@@ -102,7 +103,9 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
       custom: true,
     };
   });
-  const [textEditor, setTextEditor] = useState<EditorState>(() => {
+  const [textEditor, setTextEditor] = useState<EditorState | undefined>(() => {
+    if (!process.browser) return undefined;
+
     const blocksFromHTML = convertFromHTML(data.description);
     const state = ContentState.createFromBlockArray(
       blocksFromHTML.contentBlocks,
@@ -111,6 +114,17 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
     return EditorState.createWithContent(state);
   });
   const [active, setActive] = useState<'edit' | 'tanya-jawab'>('edit');
+
+  const { data: discussions, isFetched } = useQuery<Discussion[]>('discussions', () => {
+    return fetch(
+      urlApi + `/admin/discussion?content_name=handcraft&content_id=${data.id}&show_answer=true`,
+      {
+        credentials: 'include',
+      }
+    )
+      .then((res) => res.json())
+      .then((data) => data.data);
+  });
 
   function addCommas(num: string) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -475,9 +489,23 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                     <div>Jawaban</div>
                   </div>
                 </div>
-                <div className="flex justify-center mt-16">
-                  <Pagination />
+                <div>
+                  {!isFetched ? (
+                    <Skeleton count={4} height={130} />
+                  ) : (
+                    discussions?.map(({ id, ...otherProps }, i) => (
+                      <DiscussionRow
+                        key={id}
+                        question_id={id}
+                        numberOrder={i + 1}
+                        {...otherProps}
+                        content_name="handcraft"
+                        name={data.name}
+                      />
+                    ))
+                  )}
                 </div>
+                <div className="flex justify-center mt-16">{/* <Pagination /> */}</div>
               </div>
             )}
           </div>
