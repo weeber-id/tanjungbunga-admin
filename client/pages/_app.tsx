@@ -17,6 +17,14 @@ import '../styles/globals.css';
 import dayjs from 'dayjs';
 import relativePlugins from 'dayjs/plugin/relativeTime';
 // import '../styles/build.css';
+import Router from 'next/router';
+import NProgress from 'nprogress'; //nprogress module
+import 'nprogress/nprogress.css'; //styles of nprogress
+//Binding events.
+NProgress.configure({ showSpinner: false });
+Router.events.on('routeChangeStart', () => NProgress.start());
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 
 const queryClient = new QueryClient();
 dayjs.extend(relativePlugins);

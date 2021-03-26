@@ -1,7 +1,8 @@
-import { Button, Sidebar, Textfield } from 'components';
+import { Button, SidebarLogin, Textfield } from 'components';
 import { useUser } from 'hooks';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useMutation } from 'react-query';
 import { urlApi } from 'utils/urlApi';
 
 const LoginPage = () => {
@@ -11,6 +12,8 @@ const LoginPage = () => {
   });
 
   const router = useRouter();
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [state, setState] = useState({
     username: '',
@@ -26,37 +29,44 @@ const LoginPage = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useMutation(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    // set iron session
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state),
-    });
+      // set iron session
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state),
+      });
 
-    // for set cookie from backend api
-    const response = await fetch(urlApi + '/login', {
-      method: 'POST',
-      body: JSON.stringify(state),
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    });
+      // for set cookie from backend api
+      await fetch(urlApi + '/login', {
+        method: 'POST',
+        body: JSON.stringify(state),
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
 
-    await response.json();
-
-    if (res.ok) {
-      await mutateUser(await res.json());
-      router.replace('/');
+      return res;
+    },
+    {
+      onSuccess: async (data) => {
+        await mutateUser(await data.json());
+        setLoading(true);
+        router.replace('/');
+      },
     }
-  };
+  );
 
   return (
     <div className="grid grid-cols-page h-screen">
-      <Sidebar />
+      <SidebarLogin />
       <div className="flex justify-center items-center">
-        <form onSubmit={handleSubmit} className="w-full max-w-xs flex flex-col px-4">
+        <form
+          onSubmit={(e) => handleSubmit.mutate(e)}
+          className="w-full max-w-xs flex flex-col px-4"
+        >
           <Textfield
             fullWidth
             className="mb-3"
@@ -80,7 +90,9 @@ const LoginPage = () => {
             autoComplete="off"
           />
           <div className="grid grid-cols-2 gap-4">
-            <Button type="submit">Login</Button>
+            <Button isLoading={handleSubmit.isLoading || loading} type="submit">
+              Login
+            </Button>
             <Button href="/register" variant="outlined" color="red">
               Daftar
             </Button>
