@@ -72,6 +72,7 @@ export type Lodging = {
   operation_time?: OperationTimeState;
   facilities_id?: string[];
   active: boolean;
+  recommendation?: boolean;
 };
 
 export type Handcraft = {
@@ -85,6 +86,7 @@ export type Handcraft = {
   description: string;
   operation_time?: OperationTimeState;
   active: boolean;
+  recommendation?: boolean;
 };
 
 export type Commodity = {
@@ -102,6 +104,7 @@ export type Commodity = {
   description: string;
   operation_time?: OperationTimeState;
   active: boolean;
+  recommendation?: boolean;
 };
 
 export type Travel = {

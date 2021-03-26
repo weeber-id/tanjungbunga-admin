@@ -33,7 +33,7 @@ const Button = forwardRef<any, ButtonProps>(
     ref
   ) => {
     const willBeUsedClassName = classNames(
-      'btn text-center inline-flex items-center justify-center px-6 rounded-md text-body-sm lg:text-body focus:outline-none',
+      'btn text-center inline-flex items-center justify-center px-6 rounded-md text-body-sm lg:text-body focus:outline-none disabled:bg-grey-light disabled:cursor-default',
       {
         'text-white': variant === 'default',
         'bg-transparent border': variant === 'outlined',

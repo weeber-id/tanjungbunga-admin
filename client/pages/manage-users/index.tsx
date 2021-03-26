@@ -148,7 +148,14 @@ const ManageUsersPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
                 let img = profile_picture;
                 if (!profile_picture) img = ImgNoAvatar;
 
-                return <UserAccount key={id} name={name} src={img} />;
+                return (
+                  <UserAccount
+                    key={id}
+                    name={name}
+                    src={img}
+                    onEdit={() => Router.push(`/manage-users/edit?id=${id}`)}
+                  />
+                );
               })}
               {!sellers?.data && (
                 <div className="text-body text-center col-span-2 italic">Tidak ada seller</div>
