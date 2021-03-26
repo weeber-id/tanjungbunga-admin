@@ -15,6 +15,8 @@ import { urlApi } from 'utils';
 import { Lodging } from 'utils/types';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import classNames from 'classnames';
+import { useUser } from 'hooks';
 
 interface PenginapanPageProps {
   data: {
@@ -52,11 +54,15 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
   data,
 }) => {
   const Router = useRouter();
+  const { user } = useUser();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchCache, setSearchCache] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [itemToDelete, setItemToDelete] = useState<Pick<Lodging, 'id' | 'name'>>();
+  const [itemToRecommend, setItemToRecommend] = useState<
+    Pick<Lodging, 'id' | 'recommendation' | 'name'> | undefined
+  >(undefined);
 
   const queryClient = useQueryClient();
 
@@ -108,7 +114,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
 
       const body = {
         id: lodging.id,
-        active: checked,
+        active: !checked,
       };
 
       return fetch(urlApi + `/admin/lodging/update/active`, {
@@ -120,6 +126,27 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
     {
       onSuccess: () => {
         queryClient.refetchQueries({ queryKey: 'lodgings' });
+      },
+    }
+  );
+
+  const handleChangeRecommendation = useMutation(
+    ({ id, recommendation }: { id: string; recommendation: boolean }) => {
+      const body = {
+        id,
+        recommendation,
+      };
+
+      return fetch(urlApi + `/admin/lodging/update/recommendation`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        credentials: 'include',
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.refetchQueries({ queryKey: 'lodgings' });
+        setItemToRecommend(undefined);
       },
     }
   );
@@ -136,6 +163,16 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
           }}
         />
       )}
+      {handleChangeRecommendation.isSuccess && (
+        <Dialog
+          singleButton
+          heading="Berhasil"
+          message={`${itemToRecommend?.name ?? 'Penginapan'} berhasil direkomendasikan`}
+          onSubmit={() => {
+            handleChangeRecommendation.reset();
+          }}
+        />
+      )}
       {itemToDelete && (
         <Dialog
           submitText="Hapus"
@@ -146,6 +183,24 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
           onCancel={() => setItemToDelete(undefined)}
           isLoading={handleDelete.isLoading}
           onSubmit={() => handleDelete.mutate(itemToDelete.id)}
+        />
+      )}
+      {itemToRecommend && (
+        <Dialog
+          heading={
+            itemToRecommend.recommendation ? 'Batalkan Rekomendasi' : 'Rekomendasikan Penginapan'
+          }
+          message={`Anda yakin ingin ${
+            itemToRecommend.recommendation ? 'menghapus rekomendasi' : 'merekomendasikan'
+          } ${itemToRecommend?.name ?? ''}`}
+          onCancel={() => setItemToRecommend(undefined)}
+          isLoading={handleChangeRecommendation.isLoading}
+          onSubmit={() =>
+            handleChangeRecommendation.mutate({
+              id: itemToRecommend.id,
+              recommendation: !itemToRecommend.recommendation,
+            })
+          }
         />
       )}
       <div className="grid h-screen" style={{ gridTemplateColumns: '240px 1fr' }}>
@@ -180,11 +235,15 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                 <div></div>
               </div>
               {lodgings?.data?.map((lodging, i) => {
-                const { id, name, price, image, active, slug } = lodging;
+                const { id, name, price, image, active, slug, recommendation } = lodging;
                 return (
                   <div
                     key={id}
-                    className="grid gap-x-6 py-2 grid-cols-table items-center text-body text-black border border-purple-light mb-3 last:mb-0"
+                    className={classNames(
+                      'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black  mb-3 last:mb-0',
+                      user?.role === 0 && recommendation && active ? 'border-2' : 'border',
+                      !active ? 'border-grey-light' : 'border-purple-light'
+                    )}
                   >
                     <div className="justify-self-center self-start font-bold">
                       {i + 1 + (currentPage - 1) * 7}
@@ -204,7 +263,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                     </div>
                     <div>
                       <Switch
-                        defaultChecked={active}
+                        checked={active}
                         onChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
                       />
                     </div>
@@ -212,6 +271,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                       <MeetBallMore
                         onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
                         onDelete={() => setItemToDelete(lodging)}
+                        onRecommend={() => setItemToRecommend({ id, name, recommendation })}
                       />
                     </div>
                   </div>

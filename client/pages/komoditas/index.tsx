@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {
   Button,
   Dialog,
@@ -8,6 +9,7 @@ import {
   Switch,
   Textfield,
 } from 'components';
+import { useUser } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import numeral from 'numeral';
@@ -52,11 +54,15 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
   data,
 }) => {
   const Router = useRouter();
+  const { user } = useUser();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchCache, setSearchCache] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [itemToDelete, setItemToDelete] = useState<Pick<Commodity, 'id' | 'name'>>();
+  const [itemToRecommend, setItemToRecommend] = useState<
+    Pick<Commodity, 'id' | 'recommendation' | 'name'> | undefined
+  >(undefined);
 
   const queryClient = useQueryClient();
 
@@ -124,6 +130,27 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
     }
   );
 
+  const handleChangeRecommendation = useMutation(
+    ({ id, recommendation }: { id: string; recommendation: boolean }) => {
+      const body = {
+        id,
+        recommendation,
+      };
+
+      return fetch(urlApi + `/admin/culinary/update/recommendation`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        credentials: 'include',
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.refetchQueries({ queryKey: 'culinaries' });
+        setItemToRecommend(undefined);
+      },
+    }
+  );
+
   return (
     <>
       {handleDelete.isSuccess && (
@@ -133,6 +160,16 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
           message={`${itemToDelete?.name ?? 'Komoditas'} berhasil dihapus`}
           onSubmit={() => {
             handleDelete.reset();
+          }}
+        />
+      )}
+      {handleChangeRecommendation.isSuccess && (
+        <Dialog
+          singleButton
+          heading="Berhasil"
+          message={`${itemToRecommend?.name ?? 'Komoditas'} berhasil direkomendasikan`}
+          onSubmit={() => {
+            handleChangeRecommendation.reset();
           }}
         />
       )}
@@ -146,6 +183,24 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
           onCancel={() => setItemToDelete(undefined)}
           isLoading={handleDelete.isLoading}
           onSubmit={() => handleDelete.mutate(itemToDelete.id)}
+        />
+      )}
+      {itemToRecommend && (
+        <Dialog
+          heading={
+            itemToRecommend.recommendation ? 'Batalkan Rekomendasi' : 'Rekomendasikan Komoditas'
+          }
+          message={`Anda yakin ingin ${
+            itemToRecommend.recommendation ? 'menghapus rekomendasi' : 'merekomendasikan'
+          } ${itemToRecommend?.name ?? ''}`}
+          onCancel={() => setItemToRecommend(undefined)}
+          isLoading={handleChangeRecommendation.isLoading}
+          onSubmit={() =>
+            handleChangeRecommendation.mutate({
+              id: itemToRecommend.id,
+              recommendation: !itemToRecommend.recommendation,
+            })
+          }
         />
       )}
       <div className="grid h-screen" style={{ gridTemplateColumns: '240px 1fr' }}>
@@ -180,12 +235,16 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                 <div></div>
               </div>
               {culinaries?.data?.map((culinary, i) => {
-                const { id, name, price, image, active, slug } = culinary;
+                const { id, name, price, image, active, slug, recommendation } = culinary;
 
                 return (
                   <div
                     key={id}
-                    className="grid gap-x-6 py-2 grid-cols-table items-center text-body text-black border border-purple-light mb-3 last:mb-0"
+                    className={classNames(
+                      'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black mb-3 last:mb-0',
+                      user?.role === 0 && recommendation && active ? 'border-2' : 'border',
+                      !active ? 'border-grey-light' : 'border-purple-light'
+                    )}
                   >
                     <div className="justify-self-center self-start font-bold">
                       {i + 1 + (currentPage - 1) * 5}
@@ -205,6 +264,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                       <MeetBallMore
                         onEdit={() => Router.push(`/komoditas/edit?id=${id}&slug=${slug}`)}
                         onDelete={() => setItemToDelete({ id, name })}
+                        onRecommend={() => setItemToRecommend({ id, name, recommendation })}
                       />
                     </div>
                   </div>
