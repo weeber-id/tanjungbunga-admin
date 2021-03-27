@@ -158,3 +158,11 @@ export type Article = {
   active: boolean;
   image_cover: string;
 };
+
+export type About = {
+  id: string;
+  name: string;
+  profile_picture: string;
+  position: string;
+  body: string;
+};

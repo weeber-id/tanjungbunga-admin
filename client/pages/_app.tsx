@@ -35,6 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Admin Desa Tanjung Bunga</title>
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <QueryClientProvider client={queryClient}>
         <MuiPickersUtilsProvider utils={DayjsUtils}>

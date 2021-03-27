@@ -1,7 +1,6 @@
 import { CardDashboard, Sidebar } from 'components';
 import { useUser } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import Head from 'next/head';
 import { urlApi } from 'utils';
 import { DashboardInfo } from 'utils/types';
 
@@ -39,9 +38,6 @@ const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
 
   return (
     <>
-      <Head>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <div className="grid h-screen grid-cols-page">
         {data && <Sidebar />}
         <div className="overflow-y-auto pb-10 min-w-[900px]">

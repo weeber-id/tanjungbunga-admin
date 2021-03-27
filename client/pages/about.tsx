@@ -1,24 +1,52 @@
 import { DummyDefaultUpload } from 'assets';
-import { Image, Sidebar, UploadPhoto, Textfield, Button, Dialog } from 'components';
+import { Button, Dialog, Image, Sidebar, Textfield, UploadPhoto } from 'components';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { urlApi } from 'utils';
+import { About } from 'utils/types';
 import { uuid } from 'uuidv4';
-import { User } from 'utils/types';
-import { useRouter } from 'next/router';
 
-const AboutPage = () => {
+interface PenginapanPageProps {
+  data: About;
+}
+
+export const getServerSideProps: GetServerSideProps<PenginapanPageProps> = async ({ req }) => {
+  const headers = new Headers();
+  if (req.headers.cookie) headers.append('cookie', req.headers.cookie);
+
+  const res = await fetch(urlApi + '/admin/about', {
+    headers: headers,
+  });
+
+  const data = await res.json();
+
+  if (!res.ok)
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+
+  return {
+    props: {
+      data: data.data,
+    },
+  };
+};
+
+const AboutPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ data }) => {
   const Router = useRouter();
 
   const [isUpload, setUpload] = useState<boolean>(false);
-  const [state, setState] = useState<Omit<User, 'id' | 'isLoggedIn'> & { password: string }>({
-    name: '',
-    profile_picture: '',
-    role: 1,
-    username: '',
-    password: '',
+  const [state, setState] = useState<Omit<About, 'id'>>({
+    name: data.name,
+    profile_picture: data.profile_picture,
+    body: data.body,
+    position: data.position,
   });
-  const [displayImage, setDisplayImage] = useState<string>('');
 
   const handleUpload = useMutation(
     (blob: Blob) => {
@@ -33,7 +61,7 @@ const AboutPage = () => {
       });
     },
     {
-      onSuccess: async (data, blob) => {
+      onSuccess: async (data) => {
         const json = await data.json();
 
         const photo = json.data.url;
@@ -44,7 +72,6 @@ const AboutPage = () => {
         });
 
         setUpload(false);
-        setDisplayImage(URL.createObjectURL(blob));
       },
     }
   );
@@ -58,8 +85,17 @@ const AboutPage = () => {
     });
   };
 
+  const handleChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { value } = e.target;
+
+    setState({
+      ...state,
+      body: value,
+    });
+  };
+
   const handleSave = useMutation(() => {
-    return fetch(urlApi + '/admin/register', {
+    return fetch(urlApi + '/admin/about/update', {
       credentials: 'include',
       method: 'POST',
       body: JSON.stringify(state),
@@ -74,16 +110,15 @@ const AboutPage = () => {
       {handleSave.isSuccess && (
         <Dialog
           singleButton
-          onSubmit={() => Router.push('/manage-users')}
+          onSubmit={() => Router.reload()}
           heading="Berhasil"
-          message={`${state.name} Berhasil dibuat!`}
+          message="Data berhasil diupdate!"
         />
       )}
       {isUpload && (
         <UploadPhoto
           onUpload={(blob) => handleUpload.mutate(blob)}
           aspectRatio="3/4"
-          shape="round"
           onCancel={() => setUpload(false)}
           isLoading={handleUpload.isLoading}
         />
@@ -101,7 +136,7 @@ const AboutPage = () => {
                 <Image
                   width={224}
                   className="mb-4"
-                  src={state.profile_picture ? displayImage : DummyDefaultUpload}
+                  src={state.profile_picture ? state.profile_picture : DummyDefaultUpload}
                   aspectRatio="3/4"
                   lazyLoading
                 />
@@ -133,18 +168,22 @@ const AboutPage = () => {
                   fullWidth
                   labelText="Jabatan :"
                   variant="borderless"
-                  name="username"
+                  name="position"
                   onChange={handleChange}
-                  value={state.username}
+                  value={state.position}
                   autoComplete="off"
                 />
                 <div>
                   <p className="text-body text-black mb-1">Isi Sambutan :</p>
                   <textarea
                     maxLength={750}
-                    className="border border-purple-light rounded-md resize-none w-full h-64"
+                    className="border text-body text-black p-2 border-purple-light rounded-md resize-none w-full h-64 focus:outline-none"
+                    value={state.body}
+                    onChange={handleChangeTextArea}
                   />
-                  <div className="text-body text-red text-right">0 / 750 Karakter</div>
+                  <div className="text-body text-red text-right">
+                    {state.body.length} / 750 Karakter
+                  </div>
                 </div>
               </div>
             </div>
@@ -153,6 +192,7 @@ const AboutPage = () => {
                 isLoading={handleSave.isLoading}
                 onClick={() => handleSave.mutate()}
                 className="w-40"
+                disabled={!(state.profile_picture && state.name)}
               >
                 Save
               </Button>
