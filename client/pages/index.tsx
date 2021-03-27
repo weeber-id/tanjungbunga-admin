@@ -40,7 +40,6 @@ const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
   return (
     <>
       <Head>
-        <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="grid h-screen grid-cols-page">

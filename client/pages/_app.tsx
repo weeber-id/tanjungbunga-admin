@@ -20,6 +20,7 @@ import relativePlugins from 'dayjs/plugin/relativeTime';
 import Router from 'next/router';
 import NProgress from 'nprogress'; //nprogress module
 import 'nprogress/nprogress.css'; //styles of nprogress
+import Head from 'next/head';
 //Binding events.
 NProgress.configure({ showSpinner: false });
 Router.events.on('routeChangeStart', () => NProgress.start());
@@ -32,6 +33,9 @@ dayjs.extend(relativePlugins);
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
+      <Head>
+        <title>Admin Desa Tanjung Bunga</title>
+      </Head>
       <QueryClientProvider client={queryClient}>
         <MuiPickersUtilsProvider utils={DayjsUtils}>
           <Component {...pageProps} />

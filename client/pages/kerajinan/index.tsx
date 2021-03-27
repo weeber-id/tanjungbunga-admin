@@ -14,6 +14,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import numeral from 'numeral';
 import { useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { urlApi } from 'utils';
 import { Handcraft } from 'utils/types';
@@ -65,7 +66,7 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
     Pick<Handcraft, 'id' | 'recommendation' | 'name'> | undefined
   >(undefined);
 
-  const { data: handcrafts, isSuccess } = useQuery(
+  const { data: handcrafts, isSuccess, isPreviousData } = useQuery(
     ['handcrafts', currentPage, search],
     () => {
       const queryParams = [];
@@ -83,6 +84,7 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
     },
     {
       initialData: data,
+      keepPreviousData: true,
     }
   );
 
@@ -233,41 +235,43 @@ const KerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                 <div>Tampilkan</div>
                 <div></div>
               </div>
-              {handcrafts?.data?.map((handcraft, i) => {
-                const { id, image, name, price, active, slug, recommendation } = handcraft;
-                return (
-                  <div
-                    key={id}
-                    className={classNames(
-                      'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black mb-3 last:mb-0',
-                      user?.role === 0 && recommendation && active ? 'border-2' : 'border',
-                      !active ? 'border-grey-light' : 'border-purple-light'
-                    )}
-                  >
-                    <div className="justify-self-center self-start font-bold">
-                      {i + 1 + (currentPage - 1) * 5}
+              {isPreviousData && <Skeleton count={5} height={180} />}
+              {!isPreviousData &&
+                handcrafts?.data?.map((handcraft, i) => {
+                  const { id, image, name, price, active, slug, recommendation } = handcraft;
+                  return (
+                    <div
+                      key={id}
+                      className={classNames(
+                        'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black mb-3 last:mb-0',
+                        user?.role === 0 && recommendation && active ? 'border-2' : 'border',
+                        !active ? 'border-grey-light' : 'border-purple-light'
+                      )}
+                    >
+                      <div className="justify-self-center self-start font-bold">
+                        {i + 1 + (currentPage - 1) * 5}
+                      </div>
+                      <div>
+                        <Image src={image} aspectRatio="4/3" className="rounded-lg" />
+                      </div>
+                      <div>{name}</div>
+                      <div>Rp {numeral(price).format('0,0')}</div>
+                      <div>
+                        <Switch
+                          checked={active}
+                          onChange={(e) => handleChangeSwitch.mutate({ e, handcraft })}
+                        />
+                      </div>
+                      <div className="relative">
+                        <MeetBallMore
+                          onEdit={() => Router.push(`/kerajinan/edit?id=${id}&slug=${slug}`)}
+                          onDelete={() => setItemToDelete({ id, name })}
+                          onRecommend={() => setItemToRecommend({ id, name, recommendation })}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <Image src={image} aspectRatio="4/3" className="rounded-lg" />
-                    </div>
-                    <div>{name}</div>
-                    <div>Rp {numeral(price).format('0,0')}</div>
-                    <div>
-                      <Switch
-                        checked={active}
-                        onChange={(e) => handleChangeSwitch.mutate({ e, handcraft })}
-                      />
-                    </div>
-                    <div className="relative">
-                      <MeetBallMore
-                        onEdit={() => Router.push(`/kerajinan/edit?id=${id}&slug=${slug}`)}
-                        onDelete={() => setItemToDelete({ id, name })}
-                        onRecommend={() => setItemToRecommend({ id, name, recommendation })}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>

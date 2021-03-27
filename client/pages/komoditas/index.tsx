@@ -14,6 +14,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import numeral from 'numeral';
 import React, { useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { urlApi } from 'utils';
 import { Commodity } from 'utils/types';
@@ -66,7 +67,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
 
   const queryClient = useQueryClient();
 
-  const { data: culinaries, isSuccess } = useQuery(
+  const { data: culinaries, isSuccess, isPreviousData } = useQuery(
     ['culinaries', currentPage, search],
     () => {
       const queryParams = [];
@@ -84,6 +85,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
     },
     {
       initialData: data,
+      keepPreviousData: true,
     }
   );
 
@@ -234,42 +236,44 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                 <div>Tampilkan</div>
                 <div></div>
               </div>
-              {culinaries?.data?.map((culinary, i) => {
-                const { id, name, price, image, active, slug, recommendation } = culinary;
+              {isPreviousData && <Skeleton count={5} height={180} />}
+              {!isPreviousData &&
+                culinaries?.data?.map((culinary, i) => {
+                  const { id, name, price, image, active, slug, recommendation } = culinary;
 
-                return (
-                  <div
-                    key={id}
-                    className={classNames(
-                      'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black mb-3 last:mb-0',
-                      user?.role === 0 && recommendation && active ? 'border-2' : 'border',
-                      !active ? 'border-grey-light' : 'border-purple-light'
-                    )}
-                  >
-                    <div className="justify-self-center self-start font-bold">
-                      {i + 1 + (currentPage - 1) * 5}
+                  return (
+                    <div
+                      key={id}
+                      className={classNames(
+                        'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black mb-3 last:mb-0',
+                        user?.role === 0 && recommendation && active ? 'border-2' : 'border',
+                        !active ? 'border-grey-light' : 'border-purple-light'
+                      )}
+                    >
+                      <div className="justify-self-center self-start font-bold">
+                        {i + 1 + (currentPage - 1) * 5}
+                      </div>
+                      <div>
+                        <Image src={image} aspectRatio="4/3" className="rounded-lg" />
+                      </div>
+                      <div>{name}</div>
+                      <div>Rp {numeral(price.start).format('0,0')}</div>
+                      <div>
+                        <Switch
+                          onChange={(e) => handleChangeSwitch.mutate({ e, commodity: culinary })}
+                          checked={active}
+                        />
+                      </div>
+                      <div className="relative">
+                        <MeetBallMore
+                          onEdit={() => Router.push(`/komoditas/edit?id=${id}&slug=${slug}`)}
+                          onDelete={() => setItemToDelete({ id, name })}
+                          onRecommend={() => setItemToRecommend({ id, name, recommendation })}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <Image src={image} aspectRatio="4/3" className="rounded-lg" />
-                    </div>
-                    <div>{name}</div>
-                    <div>Rp {numeral(price.start).format('0,0')}</div>
-                    <div>
-                      <Switch
-                        onChange={(e) => handleChangeSwitch.mutate({ e, commodity: culinary })}
-                        checked={active}
-                      />
-                    </div>
-                    <div className="relative">
-                      <MeetBallMore
-                        onEdit={() => Router.push(`/komoditas/edit?id=${id}&slug=${slug}`)}
-                        onDelete={() => setItemToDelete({ id, name })}
-                        onRecommend={() => setItemToRecommend({ id, name, recommendation })}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>

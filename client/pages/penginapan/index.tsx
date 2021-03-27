@@ -17,6 +17,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { useUser } from 'hooks';
+import Skeleton from 'react-loading-skeleton';
 
 interface PenginapanPageProps {
   data: {
@@ -29,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<PenginapanPageProps> = async
   const headers = new Headers();
   if (req.headers.cookie) headers.append('cookie', req.headers.cookie);
 
-  const res = await fetch(urlApi + '/admin/lodgings?page=1&content_per_page=7', {
+  const res = await fetch(urlApi + '/admin/lodgings?page=1&content_per_page=5', {
     headers: headers,
   });
 
@@ -66,7 +67,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
 
   const queryClient = useQueryClient();
 
-  const { data: lodgings, isSuccess } = useQuery(
+  const { data: lodgings, isSuccess, isPreviousData } = useQuery(
     ['lodgings', currentPage, search],
     () => {
       const queryParams = [];
@@ -74,7 +75,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
       if (queryParams.length > 0) queryParams[0] = `&${queryParams[0]}`;
 
       return fetch(
-        urlApi + `/admin/lodgings?page=${currentPage}&content_per_page=7${queryParams.join('&')}`,
+        urlApi + `/admin/lodgings?page=${currentPage}&content_per_page=5${queryParams.join('&')}`,
         {
           credentials: 'include',
         }
@@ -84,6 +85,7 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
     },
     {
       initialData: data,
+      keepPreviousData: true,
     }
   );
 
@@ -234,49 +236,51 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                 <div>Tampilkan</div>
                 <div></div>
               </div>
-              {lodgings?.data?.map((lodging, i) => {
-                const { id, name, price, image, active, slug, recommendation } = lodging;
-                return (
-                  <div
-                    key={id}
-                    className={classNames(
-                      'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black  mb-3 last:mb-0',
-                      user?.role === 0 && recommendation && active ? 'border-2' : 'border',
-                      !active ? 'border-grey-light' : 'border-purple-light'
-                    )}
-                  >
-                    <div className="justify-self-center self-start font-bold">
-                      {i + 1 + (currentPage - 1) * 7}
+              {isPreviousData && <Skeleton count={5} height={180} />}
+              {!isPreviousData &&
+                lodgings?.data?.map((lodging, i) => {
+                  const { id, name, price, image, active, slug, recommendation } = lodging;
+                  return (
+                    <div
+                      key={id}
+                      className={classNames(
+                        'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black  mb-3 last:mb-0',
+                        user?.role === 0 && recommendation && active ? 'border-2' : 'border',
+                        !active ? 'border-grey-light' : 'border-purple-light'
+                      )}
+                    >
+                      <div className="justify-self-center self-start font-bold">
+                        {i + 1 + (currentPage - 1) * 5}
+                      </div>
+                      <div>
+                        <Image
+                          src={image}
+                          objectPosition="0 0"
+                          objectFit="cover"
+                          aspectRatio="4/3"
+                          className="rounded-lg"
+                        />
+                      </div>
+                      <div>{name}</div>
+                      <div>
+                        Rp {numeral(price.value).format('0,0')} /{price.unit}
+                      </div>
+                      <div>
+                        <Switch
+                          checked={active}
+                          onChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
+                        />
+                      </div>
+                      <div className="relative">
+                        <MeetBallMore
+                          onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                          onDelete={() => setItemToDelete(lodging)}
+                          onRecommend={() => setItemToRecommend({ id, name, recommendation })}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <Image
-                        src={image}
-                        objectPosition="0 0"
-                        objectFit="cover"
-                        aspectRatio="4/3"
-                        className="rounded-lg"
-                      />
-                    </div>
-                    <div>{name}</div>
-                    <div>
-                      Rp {numeral(price.value).format('0,0')} /{price.unit}
-                    </div>
-                    <div>
-                      <Switch
-                        checked={active}
-                        onChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
-                      />
-                    </div>
-                    <div className="relative">
-                      <MeetBallMore
-                        onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
-                        onDelete={() => setItemToDelete(lodging)}
-                        onRecommend={() => setItemToRecommend({ id, name, recommendation })}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
             </div>
           </div>
         </div>
