@@ -29,6 +29,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.ic-red path {
+  fill: #f05b4c;
+}
+
 .public-DraftStyleDefault-block {
   margin: 4px 0 !important;
 }

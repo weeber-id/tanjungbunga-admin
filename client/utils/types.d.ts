@@ -115,6 +115,9 @@ export type Travel = {
   price: string;
   short_description: string;
   description: string;
+  operation_time?: OperationTimeState;
+  active: boolean;
+  recommendation?: boolean;
 };
 
 export type DashboardInfo = {
