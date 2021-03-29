@@ -33,6 +33,10 @@
   fill: #f05b4c;
 }
 
+.ic-stroke-red path {
+  stroke: #f05b4c;
+}
+
 .public-DraftStyleDefault-block {
   margin: 4px 0 !important;
 }

@@ -8,6 +8,7 @@ interface SwitchProps {
   name?: string;
   value?: string;
   defaultChecked?: boolean;
+  size?: 'md' | 'sm';
 }
 
 const Switch: React.FC<SwitchProps> = ({
@@ -17,9 +18,14 @@ const Switch: React.FC<SwitchProps> = ({
   name,
   value,
   defaultChecked,
+  size = 'md',
 }) => {
   return (
-    <label className={classNames(styles.switch, className)}>
+    <label
+      className={classNames(styles.switch, className, {
+        [styles.sm]: size === 'sm',
+      })}
+    >
       <input
         name={name}
         value={value}
@@ -29,7 +35,11 @@ const Switch: React.FC<SwitchProps> = ({
         type="checkbox"
         defaultChecked={defaultChecked}
       />
-      <span className={classNames(styles.slider, styles.round)}></span>
+      <span
+        className={classNames(styles.slider, styles.round, {
+          [styles.sm]: size === 'sm',
+        })}
+      ></span>
     </label>
   );
 };

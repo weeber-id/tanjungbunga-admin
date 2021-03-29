@@ -1,23 +1,24 @@
-import numeral from 'numeral';
+import classNames from 'classnames';
 import {
   Button,
-  Switch,
+  Dialog,
   Image,
+  ItemCardMobile,
   MeetBallMore,
   Pagination,
   Sidebar,
+  Switch,
   Textfield,
-  Dialog,
 } from 'components';
+import { useMedia, useUser } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { useRouter } from 'next/router';
+import numeral from 'numeral';
+import React, { useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { urlApi } from 'utils';
 import { Lodging } from 'utils/types';
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import classNames from 'classnames';
-import { useUser } from 'hooks';
-import Skeleton from 'react-loading-skeleton';
 
 interface PenginapanPageProps {
   data: {
@@ -66,6 +67,8 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
   >(undefined);
 
   const queryClient = useQueryClient();
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   const { data: lodgings, isSuccess, isPreviousData } = useQuery(
     ['lodgings', currentPage, search],
@@ -205,86 +208,135 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
           }
         />
       )}
-      <div className="grid h-screen" style={{ gridTemplateColumns: '240px 1fr' }}>
-        <Sidebar />
-        <div className="overflow-y-auto pb-10">
-          <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
-            Penginapan
-          </h5>
-          <div className="px-12 mt-6">
-            <Button href="/penginapan/create">+ Tambah Penginapan</Button>
-            <div className="flex items-center justify-between mt-10">
-              <Pagination
-                currentPage={currentPage}
-                onChange={(cp) => setCurrentPage(cp)}
-                maxPage={lodgings?.max_page}
-              />
-              <form onSubmit={handleSubmitSearch}>
-                <Textfield
-                  value={searchCache}
-                  onChange={(e) => setSearchCache(e.target.value)}
-                  variant="search-right"
+      {!isMobile && (
+        <div className="grid h-screen" style={{ gridTemplateColumns: '240px 1fr' }}>
+          <Sidebar />
+          <div className="overflow-y-auto pb-10">
+            <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
+              Penginapan
+            </h5>
+            <div className="px-12 mt-6">
+              <Button href="/penginapan/create">+ Tambah Penginapan</Button>
+              <div className="flex items-center justify-between mt-10">
+                <Pagination
+                  currentPage={currentPage}
+                  onChange={(cp) => setCurrentPage(cp)}
+                  maxPage={lodgings?.max_page}
                 />
-              </form>
-            </div>
-            <div className="mt-4">
-              <div className="grid gap-x-6 grid-cols-table text-body font-medium text-purple border border-purple-light rounded-tl-lg rounded-tr-lg py-2 mb-1">
-                <div className="justify-self-center">No.</div>
-                <div>Foto</div>
-                <div>Nama Penginapan</div>
-                <div>Harga Penginapan</div>
-                <div>Tampilkan</div>
-                <div></div>
+                <form onSubmit={handleSubmitSearch}>
+                  <Textfield
+                    value={searchCache}
+                    onChange={(e) => setSearchCache(e.target.value)}
+                    variant="search-right"
+                  />
+                </form>
               </div>
-              {isPreviousData && <Skeleton count={5} height={180} />}
-              {!isPreviousData &&
-                lodgings?.data?.map((lodging, i) => {
-                  const { id, name, price, image, active, slug, recommendation } = lodging;
-                  return (
-                    <div
-                      key={id}
-                      className={classNames(
-                        'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black  mb-3 last:mb-0',
-                        user?.role === 0 && recommendation && active ? 'border-2' : 'border',
-                        !active ? 'border-grey-light' : 'border-purple-light'
-                      )}
-                    >
-                      <div className="justify-self-center self-start font-bold">
-                        {i + 1 + (currentPage - 1) * 5}
+
+              <div className="mt-4">
+                <div className="grid gap-x-6 grid-cols-table text-body font-medium text-purple border border-purple-light rounded-tl-lg rounded-tr-lg py-2 mb-1">
+                  <div className="justify-self-center">No.</div>
+                  <div>Foto</div>
+                  <div>Nama Penginapan</div>
+                  <div>Harga Penginapan</div>
+                  <div>Tampilkan</div>
+                  <div></div>
+                </div>
+                {isPreviousData && <Skeleton count={5} height={180} />}
+                {!isPreviousData &&
+                  lodgings?.data?.map((lodging, i) => {
+                    const { id, name, price, image, active, slug, recommendation } = lodging;
+                    return (
+                      <div
+                        key={id}
+                        className={classNames(
+                          'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black  mb-3 last:mb-0',
+                          user?.role === 0 && recommendation && active ? 'border-2' : 'border',
+                          !active ? 'border-grey-light' : 'border-purple-light'
+                        )}
+                      >
+                        <div className="justify-self-center self-start font-bold">
+                          {i + 1 + (currentPage - 1) * 5}
+                        </div>
+                        <div>
+                          <Image
+                            src={image}
+                            objectPosition="0 0"
+                            objectFit="cover"
+                            aspectRatio="4/3"
+                            className="rounded-lg"
+                          />
+                        </div>
+                        <div>{name}</div>
+                        <div>
+                          Rp {numeral(price.value).format('0,0')} /{price.unit}
+                        </div>
+                        <div>
+                          <Switch
+                            checked={active}
+                            onChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
+                          />
+                        </div>
+                        <div className="relative">
+                          <MeetBallMore
+                            onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                            onDelete={() => setItemToDelete(lodging)}
+                            onRecommend={() => setItemToRecommend({ id, name, recommendation })}
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <Image
-                          src={image}
-                          objectPosition="0 0"
-                          objectFit="cover"
-                          aspectRatio="4/3"
-                          className="rounded-lg"
-                        />
-                      </div>
-                      <div>{name}</div>
-                      <div>
-                        Rp {numeral(price.value).format('0,0')} /{price.unit}
-                      </div>
-                      <div>
-                        <Switch
-                          checked={active}
-                          onChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
-                        />
-                      </div>
-                      <div className="relative">
-                        <MeetBallMore
-                          onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
-                          onDelete={() => setItemToDelete(lodging)}
-                          onRecommend={() => setItemToRecommend({ id, name, recommendation })}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+      {isMobile && (
+        <div className="p-4">
+          <div className="flex items-center mb-8">
+            <Button className="mr-6">+ Tambah Penginapan</Button>
+            <form onSubmit={handleSubmitSearch}>
+              <Textfield
+                value={searchCache}
+                onChange={(e) => setSearchCache(e.target.value)}
+                variant="search-right"
+                inputClassName="w-full"
+              />
+            </form>
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            onChange={(cp) => setCurrentPage(cp)}
+            maxPage={lodgings?.max_page}
+          />
+          <div className="mt-6">
+            {isPreviousData && <Skeleton count={5} height={200} />}
+            {!isPreviousData &&
+              lodgings?.data?.map((lodging, i) => {
+                const { id, name, price, image, active, slug, recommendation } = lodging;
+                const orderNumber = i + 1 + (currentPage - 1) * 5;
+                return (
+                  <ItemCardMobile
+                    className="mb-3"
+                    orderNumber={orderNumber}
+                    key={id}
+                    label="Harga Penginapan"
+                    price={numeral(price.value).format('0,0')}
+                    unit={price.unit}
+                    name={name}
+                    image={image}
+                    active={active}
+                    onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                    onDelete={() => setItemToDelete(lodging)}
+                    onRecommend={() => setItemToRecommend({ id, name, recommendation })}
+                    isRecommended={recommendation}
+                    onSwitchChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
+                  />
+                );
+              })}
+          </div>
+        </div>
+      )}
     </>
   );
 };
