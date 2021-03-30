@@ -7,6 +7,7 @@ import {
   MeetBallMore,
   Pagination,
   Sidebar,
+  SidebarMobile,
   Switch,
   Textfield,
 } from 'components';
@@ -292,50 +293,56 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
         </div>
       )}
       {isMobile && (
-        <div className="p-4">
-          <div className="flex items-center mb-8">
-            <Button className="mr-6">+ Tambah Penginapan</Button>
-            <form onSubmit={handleSubmitSearch}>
-              <Textfield
-                value={searchCache}
-                onChange={(e) => setSearchCache(e.target.value)}
-                variant="search-right"
-                inputClassName="w-full"
-              />
-            </form>
+        <>
+          <SidebarMobile />
+          <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-4 border-b border-purple-light">
+            Penginapan
+          </h5>
+          <div className="p-4">
+            <div className="flex items-center mb-8">
+              <Button className="mr-6">+ Tambah Penginapan</Button>
+              <form onSubmit={handleSubmitSearch}>
+                <Textfield
+                  value={searchCache}
+                  onChange={(e) => setSearchCache(e.target.value)}
+                  variant="search-right"
+                  inputClassName="w-full"
+                />
+              </form>
+            </div>
+            <Pagination
+              currentPage={currentPage}
+              onChange={(cp) => setCurrentPage(cp)}
+              maxPage={lodgings?.max_page}
+            />
+            <div className="mt-6">
+              {isPreviousData && <Skeleton count={5} height={200} />}
+              {!isPreviousData &&
+                lodgings?.data?.map((lodging, i) => {
+                  const { id, name, price, image, active, slug, recommendation } = lodging;
+                  const orderNumber = i + 1 + (currentPage - 1) * 5;
+                  return (
+                    <ItemCardMobile
+                      className="mb-3"
+                      orderNumber={orderNumber}
+                      key={id}
+                      label="Harga Penginapan"
+                      price={numeral(price.value).format('0,0')}
+                      unit={price.unit}
+                      name={name}
+                      image={image}
+                      active={active}
+                      onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                      onDelete={() => setItemToDelete(lodging)}
+                      onRecommend={() => setItemToRecommend({ id, name, recommendation })}
+                      isRecommended={recommendation}
+                      onSwitchChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
+                    />
+                  );
+                })}
+            </div>
           </div>
-          <Pagination
-            currentPage={currentPage}
-            onChange={(cp) => setCurrentPage(cp)}
-            maxPage={lodgings?.max_page}
-          />
-          <div className="mt-6">
-            {isPreviousData && <Skeleton count={5} height={200} />}
-            {!isPreviousData &&
-              lodgings?.data?.map((lodging, i) => {
-                const { id, name, price, image, active, slug, recommendation } = lodging;
-                const orderNumber = i + 1 + (currentPage - 1) * 5;
-                return (
-                  <ItemCardMobile
-                    className="mb-3"
-                    orderNumber={orderNumber}
-                    key={id}
-                    label="Harga Penginapan"
-                    price={numeral(price.value).format('0,0')}
-                    unit={price.unit}
-                    name={name}
-                    image={image}
-                    active={active}
-                    onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
-                    onDelete={() => setItemToDelete(lodging)}
-                    onRecommend={() => setItemToRecommend({ id, name, recommendation })}
-                    isRecommended={recommendation}
-                    onSwitchChange={(e) => handleChangeSwitch.mutate({ e, lodging })}
-                  />
-                );
-              })}
-          </div>
-        </div>
+        </>
       )}
     </>
   );

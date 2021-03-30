@@ -3,14 +3,16 @@ import {
   Button,
   Dialog,
   Image,
+  ItemCardMobile,
   MeetBallMore,
   Pagination,
   Sidebar,
+  SidebarMobile,
   Switch,
   Textfield,
 } from 'components';
 import dayjs from 'dayjs';
-import { useUser } from 'hooks';
+import { useMedia, useUser } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -87,6 +89,8 @@ const ArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProp
       keepPreviousData: true,
     }
   );
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   const handleSubmitSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -204,86 +208,147 @@ const ArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProp
           }
         />
       )}
-      <div className="grid h-screen" style={{ gridTemplateColumns: '240px 1fr' }}>
-        <Sidebar />
-        <div className="overflow-y-auto pb-10">
-          <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
+      {!isMobile && (
+        <div className="grid h-screen" style={{ gridTemplateColumns: '240px 1fr' }}>
+          <Sidebar />
+          <div className="overflow-y-auto pb-10">
+            <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
+              Artikel
+            </h5>
+            <div className="px-12 mt-6">
+              <Button href="/artikel/create">+ Tambah Artikel</Button>
+              <div className="flex items-center justify-between mt-10">
+                <Pagination
+                  onChange={(cp) => setCurrentPage(cp)}
+                  currentPage={currentPage}
+                  maxPage={articles?.max_page}
+                />
+                <form onSubmit={handleSubmitSearch}>
+                  <Textfield
+                    value={searchCache}
+                    onChange={(e) => setSearchCache(e.target.value)}
+                    variant="search-right"
+                  />
+                </form>
+              </div>
+              <div className="mt-4">
+                <div className="grid gap-x-6 grid-cols-table text-body font-medium text-purple border border-purple-light rounded-tl-lg rounded-tr-lg py-2 mb-1">
+                  <div className="justify-self-center">No.</div>
+                  <div>Foto</div>
+                  <div>Nama Artikel</div>
+                  <div>Tanggal dibuat</div>
+                  <div>Tampilkan</div>
+                  <div></div>
+                </div>
+                {isPreviousData && <Skeleton count={5} height={180} />}
+                {!isPreviousData &&
+                  articles?.data?.map((article, i) => {
+                    const {
+                      id,
+                      image_cover,
+                      title,
+                      created_at,
+                      active,
+                      slug,
+                      recommendation,
+                    } = article;
+                    return (
+                      <div
+                        key={id}
+                        className={classNames(
+                          'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black mb-3 last:mb-0',
+                          user?.role === 0 && recommendation && active ? 'border-2' : 'border',
+                          !active ? 'border-grey-light' : 'border-purple-light'
+                        )}
+                      >
+                        <div className="justify-self-center self-start font-bold">
+                          {i + 1 + (currentPage - 1) * 5}
+                        </div>
+                        <div>
+                          <Image src={image_cover} aspectRatio="16/9" className="rounded-lg" />
+                        </div>
+                        <div>{title}</div>
+                        <div>{dayjs(created_at).format('D MMMM YYYY')}</div>
+                        <div>
+                          <Switch
+                            checked={active}
+                            onChange={(e) => handleChangeSwitch.mutate({ e, article })}
+                          />
+                        </div>
+                        <div className="relative">
+                          <MeetBallMore
+                            onEdit={() => Router.push(`/artikel/edit?id=${id}&slug=${slug}`)}
+                            onDelete={() => setItemToDelete({ id, title })}
+                            onRecommend={() => setItemToRecommend({ id, title, recommendation })}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {isMobile && (
+        <>
+          <SidebarMobile />
+          <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-4 border-b border-purple-light">
             Artikel
           </h5>
-          <div className="px-12 mt-6">
-            <Button href="/artikel/create">+ Tambah Artikel</Button>
-            <div className="flex items-center justify-between mt-10">
-              <Pagination
-                onChange={(cp) => setCurrentPage(cp)}
-                currentPage={currentPage}
-                maxPage={articles?.max_page}
-              />
+          <div className="p-4">
+            <div className="flex items-center mb-8">
+              <Button className="mr-6">+ Tambah Artikel</Button>
               <form onSubmit={handleSubmitSearch}>
                 <Textfield
                   value={searchCache}
                   onChange={(e) => setSearchCache(e.target.value)}
                   variant="search-right"
+                  inputClassName="w-full"
                 />
               </form>
             </div>
-            <div className="mt-4">
-              <div className="grid gap-x-6 grid-cols-table text-body font-medium text-purple border border-purple-light rounded-tl-lg rounded-tr-lg py-2 mb-1">
-                <div className="justify-self-center">No.</div>
-                <div>Foto</div>
-                <div>Nama Artikel</div>
-                <div>Tanggal dibuat</div>
-                <div>Tampilkan</div>
-                <div></div>
-              </div>
-              {isPreviousData && <Skeleton count={5} height={180} />}
+            <Pagination
+              currentPage={currentPage}
+              onChange={(cp) => setCurrentPage(cp)}
+              maxPage={articles?.max_page}
+            />
+            <div className="mt-6">
+              {isPreviousData && <Skeleton count={5} height={200} />}
               {!isPreviousData &&
                 articles?.data?.map((article, i) => {
                   const {
                     id,
-                    image_cover,
                     title,
-                    created_at,
                     active,
                     slug,
                     recommendation,
+                    created_at,
+                    image_cover,
                   } = article;
+                  const orderNumber = i + 1 + (currentPage - 1) * 5;
                   return (
-                    <div
+                    <ItemCardMobile
+                      className="mb-3"
+                      orderNumber={orderNumber}
                       key={id}
-                      className={classNames(
-                        'grid gap-x-6 py-2 grid-cols-table items-center text-body text-black mb-3 last:mb-0',
-                        user?.role === 0 && recommendation && active ? 'border-2' : 'border',
-                        !active ? 'border-grey-light' : 'border-purple-light'
-                      )}
-                    >
-                      <div className="justify-self-center self-start font-bold">
-                        {i + 1 + (currentPage - 1) * 5}
-                      </div>
-                      <div>
-                        <Image src={image_cover} aspectRatio="16/9" className="rounded-lg" />
-                      </div>
-                      <div>{title}</div>
-                      <div>{dayjs(created_at).format('D MMMM YYYY')}</div>
-                      <div>
-                        <Switch
-                          checked={active}
-                          onChange={(e) => handleChangeSwitch.mutate({ e, article })}
-                        />
-                      </div>
-                      <div className="relative">
-                        <MeetBallMore
-                          onEdit={() => Router.push(`/artikel/edit?id=${id}&slug=${slug}`)}
-                          onDelete={() => setItemToDelete({ id, title })}
-                          onRecommend={() => setItemToRecommend({ id, title, recommendation })}
-                        />
-                      </div>
-                    </div>
+                      label="Tanggal Buat"
+                      createdAt={dayjs(created_at).format('D MMMM YYYY')}
+                      name={title}
+                      image={image_cover}
+                      active={active}
+                      onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                      onDelete={() => setItemToDelete(article)}
+                      onRecommend={() => setItemToRecommend({ id, title, recommendation })}
+                      isRecommended={recommendation}
+                      onSwitchChange={(e) => handleChangeSwitch.mutate({ e, article })}
+                    />
                   );
                 })}
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 };

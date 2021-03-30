@@ -17,6 +17,7 @@ interface ItemCardMobileProps {
   onSwitchChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   aspectRatio?: '16/9' | '4/3';
   isRecommended?: boolean;
+  createdAt?: string;
 }
 
 const ItemCardMobile: React.FC<ItemCardMobileProps> = ({
@@ -34,6 +35,7 @@ const ItemCardMobile: React.FC<ItemCardMobileProps> = ({
   onEdit,
   onRecommend,
   isRecommended,
+  createdAt,
 }) => {
   return (
     <div
@@ -55,9 +57,10 @@ const ItemCardMobile: React.FC<ItemCardMobileProps> = ({
           <div className="text-grey-light mb-2">{label}</div>
           {price && (
             <div>
-              Rp {price} / {unit}
+              Rp {price} {unit && '/'} {unit}
             </div>
           )}
+          {createdAt && <div>{createdAt}</div>}
         </div>
         <div className="col-span-3">
           <div className="text-grey-light mb-2">Tampilkan</div>
