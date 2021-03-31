@@ -1,8 +1,9 @@
 import { DummyDefaultUpload } from 'assets';
-import { Button, Dialog, Image, Sidebar, UploadPhoto } from 'components';
+import { Button, Dialog, Image, Sidebar, SidebarMobile, UploadPhoto } from 'components';
 import TextField from 'components/atoms/textfield';
 import { convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
+import { useMedia } from 'hooks';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
@@ -28,6 +29,8 @@ const CreateArtikelPage = () => {
     body: '',
   });
   const [isUpload, setUpload] = useState<boolean>(false);
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -100,15 +103,15 @@ const CreateArtikelPage = () => {
         />
       )}
 
-      <div className="grid grid-cols-page h-screen">
-        <Sidebar />
+      <div className="sm:grid grid-cols-page h-screen">
+        {isMobile ? <SidebarMobile /> : <Sidebar />}
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
             Tambah Artikel
           </h5>
-          <div className="px-12 py-10">
-            <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-6">
-              <div className="flex flex-col items-start">
+          <div className="sm:px-12 px-6 py-10">
+            <div style={{ gridTemplateColumns: '312px 1fr' }} className="sm:grid gap-x-6">
+              <div className="flex flex-col items-start mb-4 sm:mb-0">
                 <Image
                   className="mb-4"
                   src={state.image_cover ? state.image_cover : DummyDefaultUpload}
@@ -151,8 +154,11 @@ const CreateArtikelPage = () => {
                       'image',
                       'history',
                     ],
+                    blockType: {
+                      options: ['Normal', 'H3', 'H4', 'H5', 'H6', 'Blockquote', 'Code'],
+                    },
                   }}
-                  editorClassName="border border-grey-light min-h-[200px]"
+                  editorClassName="border border-grey-light px-3 min-h-[200px]"
                   onEditorStateChange={(editorState) => {
                     const rawContent = convertToRaw(editorState.getCurrentContent());
 
@@ -166,7 +172,7 @@ const CreateArtikelPage = () => {
                 />
               </div>
             </div>
-            <div className="pb-20 border-b border-black last:border-0"></div>
+            <div className="sm:pb-20 border-b border-black last:border-0"></div>
           </div>
           <div className="flex justify-center mb-6">
             <Button

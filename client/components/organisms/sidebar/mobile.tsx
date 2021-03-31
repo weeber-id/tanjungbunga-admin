@@ -9,7 +9,7 @@ const SidebarMobile = () => {
     <>
       <button
         onClick={() => setShow(!show)}
-        className="fixed bottom-4 right-4 w-12 h-12 rounded-full bg-purple-light shadow-lg flex justify-center items-center text-white"
+        className="fixed z-50 bottom-4 right-4 w-12 h-12 rounded-full bg-purple-light shadow-lg flex justify-center items-center text-white"
       >
         X
       </button>

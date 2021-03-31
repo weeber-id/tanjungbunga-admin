@@ -1,8 +1,9 @@
 import { DummyDefaultUpload } from 'assets';
-import { Button, Dialog, Image, Sidebar, UploadPhoto } from 'components';
+import { Button, Dialog, Image, Sidebar, SidebarMobile, UploadPhoto } from 'components';
 import TextField from 'components/atoms/textfield';
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
+import { useMedia } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -72,6 +73,8 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
     );
     return EditorState.createWithContent(state);
   });
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -144,15 +147,15 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
         />
       )}
 
-      <div className="grid grid-cols-page h-screen">
-        <Sidebar />
+      <div className="sm:grid grid-cols-page h-screen">
+        {isMobile ? <SidebarMobile /> : <Sidebar />}
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
-            Tambah Artikel
+            Edit Artikel
           </h5>
-          <div className="px-12 py-10">
-            <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-6">
-              <div className="flex flex-col items-start">
+          <div className="sm:px-12 px-6 py-10">
+            <div style={{ gridTemplateColumns: '312px 1fr' }} className="sm:grid gap-x-6">
+              <div className="flex flex-col items-start sm:mb-0 mb-4">
                 <Image
                   className="mb-4"
                   src={state.image_cover ? state.image_cover : DummyDefaultUpload}
@@ -195,8 +198,11 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
                       'image',
                       'history',
                     ],
+                    blockType: {
+                      options: ['Normal', 'H3', 'H4', 'H5', 'H6', 'Blockquote', 'Code'],
+                    },
                   }}
-                  editorClassName="border border-grey-light min-h-[200px]"
+                  editorClassName="border border-grey-light min-h-[200px] px-3"
                   onEditorStateChange={(editorState) => {
                     const rawContent = convertToRaw(editorState.getCurrentContent());
 
@@ -212,7 +218,7 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
                 />
               </div>
             </div>
-            <div className="pb-20 border-b border-black last:border-0"></div>
+            <div className="sm:pb-20 border-b border-black last:border-0"></div>
           </div>
           <div className="flex justify-center mb-6">
             <Button

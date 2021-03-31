@@ -8,12 +8,14 @@ import {
   OperationTime,
   Radio,
   Sidebar,
+  SidebarMobile,
   Textfield,
   UploadPhoto,
 } from 'components';
 import TextField from 'components/atoms/textfield';
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
+import { useMedia } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -125,6 +127,8 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
       .then((res) => res.json())
       .then((data) => data.data);
   });
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   function addCommas(num: string) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -279,15 +283,15 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
           onCancel={() => setCustomHour(false)}
         />
       )}
-      <div className="grid grid-cols-page h-screen">
-        <Sidebar />
+      <div className="sm:grid grid-cols-page h-screen">
+        {isMobile ? <SidebarMobile /> : <Sidebar />}
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
             Edit Belanja
           </h5>
-          <div className="px-12 py-10">
-            <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-6">
-              <div className="flex flex-col items-start">
+          <div className="sm:px-12 px-6 py-10">
+            <div style={{ gridTemplateColumns: '312px 1fr' }} className="sm:grid gap-x-6">
+              <div className="flex flex-col items-start mb-4 sm:mb-0">
                 <Image
                   className="mb-4"
                   src={state.image ? state.image : DummyDefaultUpload}
@@ -316,7 +320,7 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                   onChange={handleChange}
                   value={state.name}
                 />
-                <div className="grid grid-cols-3 gap-x-12 mb-6">
+                <div className="sm:grid grid-cols-3 gap-x-12 mb-6">
                   <div className="flex flex-col">
                     <TextField
                       labelText="Harga Belanja :"
@@ -363,7 +367,7 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                 </div>
               </div>
             </div>
-            <div className="flex items-center text-h5 border-b border-grey mt-20">
+            <div className="flex items-center text-body sm:text-h5 border-b border-grey mt-20">
               <button
                 onClick={() => setActive('edit')}
                 className={classNames(
@@ -397,7 +401,6 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                     toolbar={{
                       options: [
                         'inline',
-                        'blockType',
                         'list',
                         'textAlign',
                         'link',
@@ -432,7 +435,7 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                       <h4 className="text-h4 font-bold">#{i + 1}</h4>
                       <div
                         style={{ gridTemplateColumns: '120px 1fr' }}
-                        className="grid gap-x-6 gap-y-3 items-center"
+                        className="sm:grid gap-x-6 gap-y-3 items-center"
                       >
                         <h5 className="text-h5 font-bold">Platform :</h5>
                         <Textfield
@@ -443,6 +446,7 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                           value={value.name}
                           data-index={i}
                           autoComplete="off"
+                          className="mb-3 sm:mb-0"
                         />
                         <h5 className="text-h5 font-bold">Link :</h5>
                         <Textfield

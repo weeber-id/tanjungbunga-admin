@@ -10,12 +10,14 @@ import {
   OperationTime,
   Radio,
   Sidebar,
+  SidebarMobile,
   Textfield,
   UploadPhoto,
 } from 'components';
 import TextField from 'components/atoms/textfield';
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
+import { useMedia } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -173,6 +175,8 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
         .then((data) => data.data);
     }
   );
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   function addCommas(num: string) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -343,15 +347,15 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
           onCancel={() => setCustomHour(false)}
         />
       )}
-      <div className="grid grid-cols-page h-screen">
-        <Sidebar />
+      <div className="sm:grid grid-cols-page h-screen">
+        {isMobile ? <SidebarMobile /> : <Sidebar />}
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
             Edit Penginapan
           </h5>
-          <div className="px-12 py-10">
-            <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-6">
-              <div className="flex flex-col items-start">
+          <div className="sm:px-12 px-6 py-10">
+            <div style={{ gridTemplateColumns: '312px 1fr' }} className="sm:grid gap-x-6">
+              <div className="flex flex-col items-start mb-4 sm:mb-0">
                 <Image
                   className="mb-4"
                   src={state.image ? displayImage : DummyDefaultUpload}
@@ -379,7 +383,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                   onChange={handleChange}
                   value={state.name}
                 />
-                <div className="grid grid-cols-3 gap-x-12 mb-6">
+                <div className="sm:grid grid-cols-3 gap-x-12 mb-6">
                   <div className="flex flex-col">
                     <TextField
                       labelText="Harga Penginapan :"
@@ -426,7 +430,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                 </div>
               </div>
             </div>
-            <div className="flex items-center text-h5 border-b border-grey mt-20">
+            <div className="flex items-center text-body sm:text-h5 border-b border-grey mt-20">
               <button
                 onClick={() => setActive('edit')}
                 className={classNames(
@@ -460,7 +464,6 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                     toolbar={{
                       options: [
                         'inline',
-                        'blockType',
                         'list',
                         'textAlign',
                         'link',
@@ -488,7 +491,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                 </div>
                 <div className="pb-20 border-b border-black last:border-0">
                   <h5 className="text-black font-bold mt-10 mb-6 text-h5">Pilih Fasilitas</h5>
-                  <div className="grid grid-cols-3 gap-6">
+                  <div className="grid sm:grid-cols-3 grid-cols-2 gap-6">
                     {isLoading ? (
                       <>
                         <Skeleton height={62} />
@@ -527,7 +530,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                       <h4 className="text-h4 font-bold">#{i + 1}</h4>
                       <div
                         style={{ gridTemplateColumns: '120px 1fr' }}
-                        className="grid gap-x-6 gap-y-3 items-center"
+                        className="sm:grid gap-x-6 gap-y-3 items-center"
                       >
                         <h5 className="text-h5 font-bold">Platform :</h5>
                         <Textfield
@@ -538,6 +541,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
                           value={value.name}
                           data-index={i}
                           autoComplete="off"
+                          className="mb-3 sm:mb-0"
                         />
                         <h5 className="text-h5 font-bold">Link :</h5>
                         <Textfield

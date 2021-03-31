@@ -11,6 +11,7 @@ import {
   OperationTime,
   Radio,
   Sidebar,
+  SidebarMobile,
   Textfield,
   UploadPhoto,
 } from 'components';
@@ -20,6 +21,7 @@ import { useMutation } from 'react-query';
 import { OperationTime24Hours, urlApi } from 'utils';
 import { useRouter } from 'next/router';
 import { uuid } from 'uuidv4';
+import { useMedia } from 'hooks';
 
 const Editor: React.ComponentType<EditorProps> = dynamic(
   // eslint-disable-next-line
@@ -46,6 +48,8 @@ const CreateKerajinanPage = () => {
     '24hours': true,
     custom: false,
   });
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   const addCommas = (num: string) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const removeNonNumeric = (num: string) => num.toString().replace(/[^0-9]/g, '');
@@ -196,15 +200,15 @@ const CreateKerajinanPage = () => {
           onCancel={() => setCustomHour(false)}
         />
       )}
-      <div className="grid grid-cols-page h-screen">
-        <Sidebar />
+      <div className="sm:grid grid-cols-page h-screen">
+        {isMobile ? <SidebarMobile /> : <Sidebar />}
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
             Tambah Belanja
           </h5>
-          <div className="px-12 py-10">
-            <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-6">
-              <div className="flex flex-col items-start">
+          <div className="sm:px-12 px-6 py-10">
+            <div style={{ gridTemplateColumns: '312px 1fr' }} className="sm:grid gap-x-6">
+              <div className="flex flex-col items-start sm:mb-0 mb-4">
                 <Image
                   className="mb-4"
                   src={state.image ? state.image : DummyDefaultUpload}
@@ -232,7 +236,7 @@ const CreateKerajinanPage = () => {
                   name="name"
                   onChange={handleChange}
                 />
-                <div className="grid grid-cols-3 gap-x-12 mb-6">
+                <div className="sm:grid grid-cols-3 gap-x-12 mb-6">
                   <div className="flex flex-col">
                     <TextField
                       labelText="Harga Belanja :"
@@ -306,7 +310,7 @@ const CreateKerajinanPage = () => {
                 }}
               />
             </div>
-            <div className="pb-20 border-b border-black last:border-0">
+            <div className="sm:pb-20 border-b border-black last:border-0">
               <h5 className="text-black font-bold mt-10 mb-6 text-h5">Pesan Komoditas</h5>
               {linksLength.map((value, i) => (
                 <div
@@ -317,7 +321,7 @@ const CreateKerajinanPage = () => {
                   <h4 className="text-h4 font-bold">#{i + 1}</h4>
                   <div
                     style={{ gridTemplateColumns: '120px 1fr' }}
-                    className="grid gap-x-6 gap-y-3 items-center"
+                    className="sm:grid gap-x-6 gap-y-3 items-center"
                   >
                     <h5 className="text-h5 font-bold">Platform :</h5>
                     <Textfield
@@ -328,6 +332,7 @@ const CreateKerajinanPage = () => {
                       value={value.name}
                       data-index={i}
                       autoComplete="off"
+                      className="mb-3 sm:mb-0"
                     />
                     <h5 className="text-h5 font-bold">Link :</h5>
                     <Textfield

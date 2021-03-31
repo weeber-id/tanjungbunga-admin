@@ -292,7 +292,9 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
           </h5>
           <div className="p-4">
             <div className="flex items-center mb-8">
-              <Button className="mr-6">+ Tambah Komoditas</Button>
+              <Button href="/komoditas/create" className="mr-6">
+                + Tambah Komoditas
+              </Button>
               <form onSubmit={handleSubmitSearch}>
                 <Textfield
                   value={searchCache}
@@ -324,7 +326,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                       name={name}
                       image={image}
                       active={active}
-                      onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                      onEdit={() => Router.push(`/komoditas/edit?id=${id}&slug=${slug}`)}
                       onDelete={() => setItemToDelete(commodity)}
                       onRecommend={() => setItemToRecommend({ id, name, recommendation })}
                       isRecommended={recommendation}

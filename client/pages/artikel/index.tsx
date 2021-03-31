@@ -298,7 +298,9 @@ const ArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProp
           </h5>
           <div className="p-4">
             <div className="flex items-center mb-8">
-              <Button className="mr-6">+ Tambah Artikel</Button>
+              <Button href="/artikel/create" className="mr-6">
+                + Tambah Artikel
+              </Button>
               <form onSubmit={handleSubmitSearch}>
                 <Textfield
                   value={searchCache}
@@ -337,7 +339,7 @@ const ArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProp
                       name={title}
                       image={image_cover}
                       active={active}
-                      onEdit={() => Router.push(`/penginapan/edit?id=${id}&slug=${slug}`)}
+                      onEdit={() => Router.push(`/artikel/edit?id=${id}&slug=${slug}`)}
                       onDelete={() => setItemToDelete(article)}
                       onRecommend={() => setItemToRecommend({ id, title, recommendation })}
                       isRecommended={recommendation}
