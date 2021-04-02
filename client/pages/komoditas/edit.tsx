@@ -506,15 +506,17 @@ const EditKomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
               <div className="mt-10">
                 <div className="text-h5 text-black font-medium mb-7">Pertanyaan</div>
                 <div>
-                  <div
-                    style={{ gridTemplateColumns: '80px 250px 1fr 200px' }}
-                    className="grid bg-blue-light mb-2.5 text-black py-5 px-4"
-                  >
-                    <div>No.</div>
-                    <div>Email</div>
-                    <div>Pertanyaan</div>
-                    <div>Jawaban</div>
-                  </div>
+                  {!isMobile && (
+                    <div
+                      style={{ gridTemplateColumns: '80px 250px 1fr 200px' }}
+                      className="grid bg-blue-light mb-2.5 text-black py-5 px-4"
+                    >
+                      <div>No.</div>
+                      <div>Email</div>
+                      <div>Pertanyaan</div>
+                      <div>Jawaban</div>
+                    </div>
+                  )}
                   <div>
                     {discussionLoading ? (
                       <Skeleton count={4} height={130} />

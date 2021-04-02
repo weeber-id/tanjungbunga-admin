@@ -1,5 +1,5 @@
 import { Button, SidebarLogin, Textfield } from 'components';
-import { useUser } from 'hooks';
+import { useMedia, useUser } from 'hooks';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
@@ -19,6 +19,8 @@ const LoginPage = () => {
     username: '',
     password: '',
   });
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -60,9 +62,9 @@ const LoginPage = () => {
   );
 
   return (
-    <div className="grid grid-cols-page h-screen">
-      <SidebarLogin />
-      <div className="flex justify-center items-center">
+    <div className="sm:grid grid-cols-page h-screen">
+      {!isMobile && <SidebarLogin />}
+      <div className="flex justify-center items-center sm:h-auto h-screen">
         <form
           onSubmit={(e) => handleSubmit.mutate(e)}
           className="w-full max-w-xs flex flex-col px-4"

@@ -14,8 +14,8 @@ const CardDashboard: React.FC<CardDashboardProps> = ({ className, title, value }
         className
       )}
     >
-      <h4 className="text-h4 mb-7">{title}</h4>
-      <h1 className="text-h1">{value}</h1>
+      <h4 className="sm:text-h4 text-h5 sm:mb-7 mb-4">{title}</h4>
+      <h1 className="sm:text-h1 text-h3">{value}</h1>
     </div>
   );
 };

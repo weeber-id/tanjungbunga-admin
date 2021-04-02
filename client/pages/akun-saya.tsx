@@ -1,12 +1,12 @@
 import { DummyDefaultUpload } from 'assets';
-import { Image, Sidebar, UploadPhoto, Textfield, Button, Dialog } from 'components';
+import { Image, Sidebar, UploadPhoto, Textfield, Button, Dialog, SidebarMobile } from 'components';
 import React, { useState } from 'react';
 import { useMutation } from 'react-query';
 import { urlApi } from 'utils';
 import { uuid } from 'uuidv4';
 import { User } from 'utils/types';
 import { useRouter } from 'next/router';
-import { useUser } from 'hooks';
+import { useMedia, useUser } from 'hooks';
 import classNames from 'classnames';
 
 const MyAccountPage = () => {
@@ -22,6 +22,8 @@ const MyAccountPage = () => {
   });
   const [displayImage, setDisplayImage] = useState<string>(user?.profile_picture || '');
   const [active, setActive] = useState<'profil' | 'password'>('profil');
+
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
 
   const handleUpload = useMutation(
     (blob: Blob) => {
@@ -91,15 +93,15 @@ const MyAccountPage = () => {
           isLoading={handleUpload.isLoading}
         />
       )}
-      <div className="grid grid-cols-page h-screen">
-        <Sidebar />
+      <div className="sm:grid grid-cols-page h-screen">
+        {isMobile ? <SidebarMobile /> : <Sidebar />}
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
             Akun Saya
           </h5>
-          <div className="px-12 py-10">
-            <div style={{ gridTemplateColumns: '312px 1fr' }} className="grid gap-x-16">
-              <div className="flex flex-col items-center">
+          <div className="sm:px-12 px-6 py-10">
+            <div style={{ gridTemplateColumns: '312px 1fr' }} className="sm:grid gap-x-16">
+              <div className="flex flex-col items-center sm:mb-0 mb-4">
                 <Image
                   width={224}
                   className="mb-4 rounded-full"
@@ -115,7 +117,7 @@ const MyAccountPage = () => {
                 <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
               </div>
               <div className="flex flex-col">
-                <div className="flex items-center text-h5 border-b border-grey mb-12">
+                <div className="flex items-center text-body sm:text-h5 border-b border-grey mb-12">
                   <button
                     onClick={() => setActive('profil')}
                     className={classNames(

@@ -1,6 +1,8 @@
+import classNames from 'classnames';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import Sidebar from '.';
+import styles from './mobile.module.css';
 
 const SidebarMobile = () => {
   const [show, setShow] = useState<boolean>(false);
@@ -9,9 +11,13 @@ const SidebarMobile = () => {
     <>
       <button
         onClick={() => setShow(!show)}
-        className="fixed z-50 bottom-4 right-4 w-12 h-12 rounded-full bg-purple-light shadow-lg flex justify-center items-center text-white"
+        className="fixed z-50 bottom-6 right-6 w-12 h-12 rounded-full bg-purple-light shadow-lg flex justify-center items-center text-white focus:outline-none"
       >
-        X
+        <div
+          className={classNames(styles.hamburger, {
+            [styles.active]: show,
+          })}
+        />
       </button>
       <AnimatePresence exitBeforeEnter>
         {show && (
