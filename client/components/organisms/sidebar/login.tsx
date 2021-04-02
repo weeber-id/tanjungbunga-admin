@@ -18,11 +18,11 @@ const SidebarLogin = () => {
         <div className="px-5 h-full">
           <div className="py-6 h-full px-2 text-body">
             <div className="flex flex-col h-full justify-center items-center">
-              <Link href="/panduan">
+              <Link href="/register">
                 <a
                   className={classNames(
                     'hover:text-red mb-5 font-bold',
-                    asPath === '/panduan' ? 'text-red' : 'text-purple-light '
+                    asPath === '/register' ? 'text-red' : 'text-purple-light '
                   )}
                 >
                   Panduan
