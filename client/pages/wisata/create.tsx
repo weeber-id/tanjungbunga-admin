@@ -1,16 +1,17 @@
 import { DummyDefaultUpload } from 'assets';
 import { Button, Dialog, Image, OperationTime, Radio, Sidebar, UploadPhoto } from 'components';
 import TextField from 'components/atoms/textfield';
+import CardRelated from 'components/mollecules/card-related';
 import { convertToRaw } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { EditorProps } from 'react-draft-wysiwyg';
-import { useMutation } from 'react-query';
-import Select from 'react-select';
+import { useMutation, useQuery } from 'react-query';
+import Select, { OptionTypeBase } from 'react-select';
 import { OperationTime24Hours, urlApi } from 'utils';
-import { Travel } from 'utils/types';
+import { Commodity, Lodging, Travel } from 'utils/types';
 import { uuid } from 'uuidv4';
 
 const Editor: React.ComponentType<EditorProps> = dynamic(
@@ -36,6 +37,62 @@ const CreateWisataPage = () => {
     '24hours': true,
     custom: false,
   });
+  const [lodgingOptions, setLodgingOptions] = useState<Record<string, OptionTypeBase>>({});
+  const [relatedLodging, setRelatedLodging] = useState<Record<string, boolean>>({});
+  const [culinaryOptions, setCulinaryOptions] = useState<Record<string, OptionTypeBase>>({});
+  const [relatedCulinary, setRelatedCulinary] = useState<Record<string, boolean>>({});
+
+  const { isLoading } = useQuery<Lodging[]>(
+    'lodging-options',
+    () => {
+      return fetch(urlApi + `/admin/lodgings`, {
+        credentials: 'include',
+      })
+        .then((res) => res.json())
+        .then((data) => data.data)
+        .then((data) => data.data);
+    },
+    {
+      keepPreviousData: true,
+      onSuccess: (data) => {
+        const obj: Record<string, OptionTypeBase> = {};
+
+        data.forEach(({ id, name }) => {
+          obj[id] = {
+            value: id,
+            label: name,
+          };
+        });
+        if (Object.keys(lodgingOptions).length <= 0) setLodgingOptions(obj);
+      },
+    }
+  );
+
+  const { isLoading: loadingCulinaries } = useQuery<Commodity[]>(
+    'culinariy-options',
+    () => {
+      return fetch(urlApi + `/admin/culinaries`, {
+        credentials: 'include',
+      })
+        .then((res) => res.json())
+        .then((data) => data.data)
+        .then((data) => data.data);
+    },
+    {
+      keepPreviousData: true,
+      onSuccess: (data) => {
+        const obj: Record<string, OptionTypeBase> = {};
+
+        data.forEach(({ id, name }) => {
+          obj[id] = {
+            value: id,
+            label: name,
+          };
+        });
+        if (Object.keys(culinaryOptions).length <= 0) setCulinaryOptions(obj);
+      },
+    }
+  );
 
   const addCommas = (num: string) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const removeNonNumeric = (num: string) => num.toString().replace(/[^0-9]/g, '');
@@ -109,6 +166,8 @@ const CreateWisataPage = () => {
     if (openingHour['24hours']) body.operation_time = OperationTime24Hours;
 
     body.price = body.price.replace(/\./g, '');
+    body.related_culinary_ids = Object.keys(relatedCulinary).filter((id) => relatedCulinary[id]);
+    body.related_lodging_ids = Object.keys(relatedLodging).filter((id) => relatedLodging[id]);
 
     return fetch(urlApi + '/admin/travel/create', {
       credentials: 'include',
@@ -265,30 +324,19 @@ const CreateWisataPage = () => {
             </div>
             <div className="pb-20 border-b border-black last:border-0">
               <h5 className="text-black font-bold mt-10 mb-6 text-h5">Hotel Terdekat</h5>
-              <div className="grid grid-cols-3">
+              <div className="grid grid-cols-3 gap-x-6">
                 <Select
+                  isDisabled={Object.values(relatedLodging).filter((value) => value).length >= 4}
                   isSearchable
-                  options={[
-                    {
-                      label: 'Nginep di Hotel',
-                      value: '123870491lkj',
-                      disabled: true,
-                    },
-                    {
-                      label: 'Nginep di Gudang',
-                      value: '123870491lk',
-                    },
-                    {
-                      label: 'Nginep di Cafe',
-                      value: '123870491kj',
-                    },
-                  ]}
+                  options={Object.values(lodgingOptions)}
+                  isLoading={isLoading}
                   placeholder="Pilih Hotel"
                   styles={{
                     container: (base) => ({
                       ...base,
                       color: '#393B3D',
                       fontSize: '18px',
+                      height: 'fit-content',
                     }),
                     control: (base) => ({
                       ...base,
@@ -297,36 +345,67 @@ const CreateWisataPage = () => {
                   }}
                   isOptionDisabled={(option) => Boolean(option.disabled)}
                   value={null}
-                  onChange={(value) => console.log(value)}
+                  onChange={(value) => {
+                    setRelatedLodging({
+                      ...relatedLodging,
+                      [value?.value]: true,
+                    });
+
+                    setLodgingOptions({
+                      ...lodgingOptions,
+                      [value?.value]: {
+                        ...value,
+                        disabled: true,
+                      },
+                    });
+                  }}
                 />
+                <div>
+                  {Object.keys(relatedLodging)?.map((id) => {
+                    if (!relatedLodging[id]) return;
+
+                    const text = lodgingOptions[id]?.label;
+
+                    return (
+                      <CardRelated
+                        onDelete={() => {
+                          setRelatedLodging({
+                            ...relatedLodging,
+                            [id]: false,
+                          });
+
+                          setLodgingOptions({
+                            ...lodgingOptions,
+                            [id]: {
+                              ...lodgingOptions[id],
+                              disabled: false,
+                            },
+                          });
+                        }}
+                        className="last:mb-0 mb-3"
+                        key={id}
+                        text={text}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <div className="pb-20 border-b border-black last:border-0">
               <h5 className="text-black font-bold mt-10 mb-6 text-h5">Kuliner Terdekat</h5>
-              <div className="grid grid-cols-3">
+              <div className="grid grid-cols-3 gap-x-6">
                 <Select
+                  isDisabled={Object.values(relatedCulinary).filter((value) => value).length >= 4}
                   isSearchable
-                  options={[
-                    {
-                      label: 'Nginep di Hotel',
-                      value: '123870491lkj',
-                      disabled: true,
-                    },
-                    {
-                      label: 'Nginep di Gudang',
-                      value: '123870491lk',
-                    },
-                    {
-                      label: 'Nginep di Cafe',
-                      value: '123870491kj',
-                    },
-                  ]}
-                  placeholder="Pilih Hotel"
+                  options={Object.values(culinaryOptions)}
+                  isLoading={loadingCulinaries}
+                  placeholder="Pilih Kuliner"
                   styles={{
                     container: (base) => ({
                       ...base,
                       color: '#393B3D',
                       fontSize: '18px',
+                      height: 'fit-content',
                     }),
                     control: (base) => ({
                       ...base,
@@ -335,14 +414,64 @@ const CreateWisataPage = () => {
                   }}
                   isOptionDisabled={(option) => Boolean(option.disabled)}
                   value={null}
-                  onChange={(value) => console.log(value)}
+                  onChange={(value) => {
+                    setRelatedCulinary({
+                      ...relatedCulinary,
+                      [value?.value]: true,
+                    });
+
+                    setCulinaryOptions({
+                      ...culinaryOptions,
+                      [value?.value]: {
+                        ...value,
+                        disabled: true,
+                      },
+                    });
+                  }}
                 />
+                <div>
+                  {Object.keys(relatedCulinary)?.map((id) => {
+                    if (!relatedCulinary[id]) return;
+
+                    const text = culinaryOptions[id]?.label;
+
+                    return (
+                      <CardRelated
+                        onDelete={() => {
+                          setRelatedCulinary({
+                            ...relatedCulinary,
+                            [id]: false,
+                          });
+
+                          setCulinaryOptions({
+                            ...culinaryOptions,
+                            [id]: {
+                              ...culinaryOptions[id],
+                              disabled: false,
+                            },
+                          });
+                        }}
+                        className="last:mb-0 mb-3"
+                        key={id}
+                        text={text}
+                      />
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
           <div className="flex justify-center mb-6">
             <Button
-              disabled={!(state.name && state.image)}
+              disabled={
+                !(
+                  state.name &&
+                  state.image &&
+                  state.description &&
+                  state.short_description &&
+                  state.price
+                )
+              }
               isLoading={handleSave.isLoading}
               onClick={() => handleSave.mutate()}
             >

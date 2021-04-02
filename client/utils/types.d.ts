@@ -118,6 +118,10 @@ export type Travel = {
   operation_time?: OperationTimeState;
   active: boolean;
   recommendation?: boolean;
+  related_culinary_ids?: string[];
+  related_lodging_ids?: string[];
+  culinary_details?: Commodity[];
+  lodging_details?: Lodging[];
 };
 
 export type DashboardInfo = {
