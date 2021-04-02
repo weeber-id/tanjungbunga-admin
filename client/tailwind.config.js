@@ -10,6 +10,7 @@ module.exports = {
         table: '60px 1fr 2fr repeat(2, 1fr) 60px',
         page: '240px 1fr',
         'operation-time': '60px auto 50px 1fr 14px 1fr',
+        'operation-time-sm': '60px auto 1fr',
       },
     },
     fontFamily: {

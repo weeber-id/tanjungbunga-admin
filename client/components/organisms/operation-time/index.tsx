@@ -3,6 +3,7 @@ import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { IconClose } from 'assets';
 import { Button, Switch } from 'components/atoms';
 import dayjs from 'dayjs';
+import { useMedia } from 'hooks';
 import { useState } from 'react';
 import { OperationTimeState } from 'utils/types';
 
@@ -93,6 +94,8 @@ const OperationTime: React.FC<OperationTimeProps> = ({
 }) => {
   const [operationTimeState, setOperationTimeState] = useState<OperationTimeState>({ ...state });
 
+  const isMobile = useMedia({ query: '(max-width: 640px)' });
+
   const handleChangeDate = (
     date: MaterialUiPickersDate,
     name: keyof OperationTimeState,
@@ -131,7 +134,7 @@ const OperationTime: React.FC<OperationTimeProps> = ({
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full overflow-y-auto bg-black bg-opacity-20 flex justify-center items-center py-10 z-50">
+    <div className="fixed top-0 left-0 w-full h-full overflow-y-auto bg-black bg-opacity-20 flex justify-center items-start sm:items-center py-10 z-50">
       <div className="bg-white px-6 py-8 w-full max-w-xl relative">
         <button
           onClick={onCancel}
@@ -147,6 +150,44 @@ const OperationTime: React.FC<OperationTimeProps> = ({
           const fromTime = dayjs().set('hour', Number(from[0])).set('minute', Number(from[1]));
           const toTime = dayjs().set('hour', Number(to[0])).set('minute', Number(to[1]));
 
+          if (isMobile)
+            return (
+              <div key={name} className="flex flex-col text-body-sm text-black mb-4 last:mb-0">
+                <span className="font-medium mb-3">
+                  {displayName} - {operationTimeState[name].open ? 'Buka' : 'Tutup'}
+                </span>
+                <div className="flex items-center">
+                  <div className="w-[60px] mr-3">
+                    <Switch
+                      size={isMobile ? 'sm' : 'md'}
+                      onChange={handleChangeOpen}
+                      name={name}
+                      checked={operationTimeState[name].open}
+                    />
+                  </div>
+                  {operationTimeState[name].open && (
+                    <>
+                      <KeyboardTimePicker
+                        ampm={false}
+                        placeholder="08:00"
+                        value={fromTime}
+                        onChange={(date) => handleChangeDate(date, name, 'from')}
+                      />
+                      <div className="relative w-8 mx-3">
+                        <div className="absolute w-full h-0.5 bg-black"></div>
+                      </div>
+                      <KeyboardTimePicker
+                        ampm={false}
+                        placeholder="20:00"
+                        value={toTime}
+                        onChange={(date) => handleChangeDate(date, name, 'to')}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+
           return (
             <div
               key={name}
@@ -154,6 +195,7 @@ const OperationTime: React.FC<OperationTimeProps> = ({
             >
               <span className="font-medium">{displayName}</span>
               <Switch
+                size={isMobile ? 'sm' : 'md'}
                 onChange={handleChangeOpen}
                 name={name}
                 checked={operationTimeState[name].open}
