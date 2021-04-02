@@ -267,8 +267,10 @@ const EditWisataPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
     if (openingHour['24hours']) body.operation_time = OperationTime24Hours;
 
     body.price = body.price.replace(/\./g, '');
+    body.related_culinary_ids = Object.keys(relatedCulinary).filter((id) => relatedCulinary[id]);
+    body.related_lodging_ids = Object.keys(relatedLodging).filter((id) => relatedLodging[id]);
 
-    return fetch(urlApi + '/admin/travel/create', {
+    return fetch(urlApi + `/admin/travel/update?id=${data.id}`, {
       credentials: 'include',
       method: 'POST',
       body: JSON.stringify(body),
