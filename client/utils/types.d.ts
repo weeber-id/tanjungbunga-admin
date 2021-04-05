@@ -168,6 +168,21 @@ export type Article = {
   updated_at: string;
   active: boolean;
   image_cover: string;
+  relateds?: (
+    | {
+        id: string;
+        source: 'article' | 'travel' | 'culinary' | 'handcraft' | 'lodging';
+        name: string;
+      }
+    | undefined
+  )[];
+  related_details?: {
+    id: string;
+    source: 'article' | 'travel' | 'culinary' | 'handcraft' | 'lodging';
+    title: string;
+    image_cover: string;
+    slug: string;
+  }[];
 };
 
 export type About = {

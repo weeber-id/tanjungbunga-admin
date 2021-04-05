@@ -23,6 +23,7 @@
   }
   p {
     @apply text-body;
+    min-height: 1rem;
   }
 }
 

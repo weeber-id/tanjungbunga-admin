@@ -9,10 +9,12 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { EditorProps } from 'react-draft-wysiwyg';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { urlApi } from 'utils';
 import { Article } from 'utils/types';
 import { uuid } from 'uuidv4';
+import Select, { OptionTypeBase } from 'react-select';
+import CardRelated from 'components/mollecules/card-related';
 
 const Editor: React.ComponentType<EditorProps> = dynamic(
   // eslint-disable-next-line
@@ -23,6 +25,12 @@ const Editor: React.ComponentType<EditorProps> = dynamic(
 
 interface ArticlePageProps {
   data: Article;
+}
+
+interface RelatedContent {
+  id: string;
+  name: string;
+  source: 'article' | 'travel' | 'culinary' | 'handcraft' | 'lodging';
 }
 
 export const getServerSideProps: GetServerSideProps<ArticlePageProps> = async ({ req, query }) => {
@@ -57,7 +65,7 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
 }) => {
   const Router = useRouter();
 
-  const [state, setState] = useState<Pick<Article, 'image_cover' | 'title' | 'body'>>({
+  const [state, setState] = useState<Pick<Article, 'image_cover' | 'title' | 'body' | 'relateds'>>({
     image_cover: data.image_cover,
     title: data.title,
     body: data.body,
@@ -73,8 +81,55 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
     );
     return EditorState.createWithContent(state);
   });
+  const [relatedOptions, setRelatedOptions] = useState<Record<string, OptionTypeBase>>({});
+  const [relatedContent, setRelatedContent] = useState<Record<string, RelatedContent | undefined>>(
+    () => {
+      const obj: Record<string, RelatedContent | undefined> = {};
+
+      data?.related_details?.forEach(({ id, title, source }) => {
+        obj[id] = {
+          id,
+          source,
+          name: title,
+        };
+      });
+
+      return obj;
+    }
+  );
 
   const isMobile = useMedia({ query: '(max-width: 640px)' });
+
+  const { isLoading } = useQuery<RelatedContent[]>(
+    'related-articles',
+    () => {
+      return fetch(urlApi + '/admin/article/list-contents-related?search=cafe', {
+        credentials: 'include',
+      })
+        .then((res) => res.json())
+        .then((data) => data.data.data);
+    },
+    {
+      keepPreviousData: true,
+      onSuccess: (data) => {
+        const obj: Record<string, OptionTypeBase> = {};
+
+        data.forEach(({ id, name, source }) => {
+          obj[id] = {
+            value: id,
+            label: name,
+            disabled: Object.keys(relatedContent).includes(id),
+            data: {
+              id,
+              source,
+              name,
+            },
+          };
+        });
+        if (Object.keys(relatedOptions).length <= 0) setRelatedOptions(obj);
+      },
+    }
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -115,6 +170,7 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
 
   const handleSave = useMutation(() => {
     const body = state;
+    body.relateds = Object.values(relatedContent).filter((val) => val !== undefined);
 
     return fetch(urlApi + `/admin/article/update?id=${data.id}`, {
       credentials: 'include',
@@ -169,8 +225,74 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
                   Upload foto
                 </button>
                 {state.image_cover && (
-                  <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
+                  <button className="text-body text-red mb-2 hover:text-purple-light">
+                    Hapus foto
+                  </button>
                 )}
+                <div className="text-h5 text-black font-bold my-4">Konten Terkait</div>
+                <Select
+                  styles={{
+                    container: (base) => ({
+                      ...base,
+                      color: '#393B3D',
+                      fontSize: '18px',
+                      height: 'fit-content',
+                    }),
+                    control: (base) => ({
+                      ...base,
+                      border: '1px solid #485FC0',
+                    }),
+                  }}
+                  className="w-full"
+                  isLoading={isLoading}
+                  options={Object.values(relatedOptions)}
+                  placeholder="Pilih Konten"
+                  isSearchable
+                  value={null}
+                  isDisabled={
+                    Object.values(relatedContent).filter((val) => val !== undefined).length >= 3
+                  }
+                  isOptionDisabled={(option) => Boolean(option.disabled)}
+                  onChange={(value) => {
+                    setRelatedContent({
+                      ...relatedContent,
+                      [value?.value]: value?.data,
+                    });
+
+                    setRelatedOptions({
+                      ...relatedOptions,
+                      [value?.value]: {
+                        ...value,
+                        disabled: true,
+                      },
+                    });
+                  }}
+                />
+                <div className="mt-4 w-full">
+                  {Object.values(relatedContent)
+                    .filter((val) => val !== undefined)
+                    .map(({ id, name }) => (
+                      <CardRelated
+                        onDelete={() => {
+                          setRelatedContent({
+                            ...relatedContent,
+                            [id]: undefined,
+                          });
+
+                          setRelatedOptions({
+                            ...relatedOptions,
+                            [id]: {
+                              ...relatedOptions[id],
+                              disabled: false,
+                            },
+                          });
+                        }}
+                        className="mb-3 last:mb-0"
+                        key={id}
+                        text={name}
+                      />
+                    ))}
+                </div>
               </div>
               <div className="flex flex-col">
                 <TextField
