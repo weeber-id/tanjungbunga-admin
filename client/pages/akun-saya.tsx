@@ -11,7 +11,7 @@ import classNames from 'classnames';
 
 const MyAccountPage = () => {
   const Router = useRouter();
-  const { user } = useUser({ redirectTo: '/login' });
+  const { user, mutateUser } = useUser({ redirectTo: '/login' });
 
   const [isUpload, setUpload] = useState<boolean>(false);
   const [state, setState] = useState<Omit<User, 'id' | 'isLoggedIn'>>({
@@ -19,6 +19,15 @@ const MyAccountPage = () => {
     profile_picture: user?.profile_picture || '',
     role: 1,
     username: user?.username || '',
+    address: user?.address || '',
+    date_of_birth: user?.date_of_birth || '',
+    email: user?.email || '',
+    phone_number_whatsapp: user?.phone_number_whatsapp || '',
+  });
+  const [passwordState, setPasswordState] = useState<Record<string, string>>({
+    old_password: '',
+    new_password: '',
+    confirm_new_password: '',
   });
   const [displayImage, setDisplayImage] = useState<string>(user?.profile_picture || '');
   const [active, setActive] = useState<'profil' | 'password'>('profil');
@@ -63,23 +72,82 @@ const MyAccountPage = () => {
     });
   };
 
-  const handleSave = useMutation(() => {
-    return fetch(urlApi + '/admin/register', {
-      credentials: 'include',
-      method: 'POST',
-      body: JSON.stringify(state),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+  const handleChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, name } = e.target;
+
+    setPasswordState({
+      ...passwordState,
+      [name]: value,
     });
-  });
+  };
+
+  const handleSave = useMutation(
+    async () => {
+      const res = await fetch(urlApi + '/admin/update', {
+        credentials: 'include',
+        method: 'POST',
+        body: JSON.stringify(state),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await res.json();
+
+      return fetch('/api/update', {
+        method: 'POST',
+        body: JSON.stringify(data.data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then((res) => res.json());
+    },
+    {
+      onSuccess: async (data) => {
+        await mutateUser({
+          id: user?.id || '',
+          ...data,
+        });
+      },
+    }
+  );
+
+  const handleSavePassword = useMutation(
+    () => {
+      return fetch(urlApi + '/admin/update/password', {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(passwordState),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        setPasswordState({
+          old_password: '',
+          new_password: '',
+          confirm_new_password: '',
+        });
+      },
+    }
+  );
 
   return (
     <>
+      {handleSavePassword.isSuccess && (
+        <Dialog
+          singleButton
+          onSubmit={() => handleSavePassword.reset()}
+          heading="Berhasil"
+          message="Password berhasil diperbaharui"
+        />
+      )}
       {handleSave.isSuccess && (
         <Dialog
           singleButton
-          onSubmit={() => Router.push('/manage-users')}
+          onSubmit={() => Router.push('/')}
           heading="Berhasil"
           message={`${state.name} Berhasil dibuat!`}
         />
@@ -157,15 +225,26 @@ const MyAccountPage = () => {
                       autoComplete="off"
                     />
                     <Textfield
+                      labelText="Email :"
+                      fullWidth
+                      placeholder="Jane Doe"
+                      variant="borderless"
+                      className="mb-8"
+                      name="email"
+                      onChange={handleChange}
+                      value={state.email}
+                      autoComplete="off"
+                    />
+                    <Textfield
                       placeholder="janedoe"
                       className="mb-8"
                       fullWidth
                       labelText="Username :"
                       variant="borderless"
                       name="username"
-                      onChange={handleChange}
                       value={state.username}
                       autoComplete="off"
+                      disabled
                     />
                     <Textfield
                       name="address"
@@ -175,14 +254,26 @@ const MyAccountPage = () => {
                       variant="borderless"
                       onChange={handleChange}
                       autoComplete="off"
+                      value={state.address}
                     />
                     <Textfield
-                      name="born"
+                      name="date_of_birth"
                       fullWidth
                       labelText="Tempat Tanggal Lahir :"
                       variant="borderless"
                       onChange={handleChange}
                       autoComplete="off"
+                      value={state.date_of_birth}
+                      className="mb-8"
+                    />
+                    <Textfield
+                      name="phone_number_whatsapp"
+                      fullWidth
+                      labelText="No. Whatsapp :"
+                      variant="borderless"
+                      onChange={handleChange}
+                      autoComplete="off"
+                      value={state.phone_number_whatsapp}
                     />
                   </>
                 )}
@@ -193,43 +284,63 @@ const MyAccountPage = () => {
                       fullWidth
                       variant="borderless"
                       className="mb-8"
-                      name="name"
-                      onChange={handleChange}
+                      name="old_password"
+                      onChange={handleChangePassword}
                       type="password"
                       autoComplete="off"
+                      placeholder="Masukkan password lama"
+                      value={passwordState.old_password}
                     />
                     <Textfield
                       className="mb-8"
                       fullWidth
                       labelText="Password Baru :"
                       variant="borderless"
-                      name="username"
-                      onChange={handleChange}
+                      name="new_password"
+                      onChange={handleChangePassword}
                       type="password"
                       autoComplete="off"
+                      placeholder="Masukkan password baru"
+                      value={passwordState.new_password}
                     />
                     <Textfield
-                      name="address"
+                      name="confirm_new_password"
                       fullWidth
                       className="mb-8"
                       labelText="Konfirmasi Password :"
                       variant="borderless"
-                      onChange={handleChange}
+                      onChange={handleChangePassword}
                       type="password"
                       autoComplete="off"
+                      placeholder="Masukkan password baru"
+                      value={passwordState.confirm_new_password}
+                      errorMessage="Password salah"
+                      isError={
+                        passwordState.new_password !== passwordState.confirm_new_password &&
+                        passwordState.confirm_new_password.length > 0
+                      }
                     />
                   </>
                 )}
               </div>
             </div>
             <div className="flex justify-center mt-20">
-              <Button
-                isLoading={handleSave.isLoading}
-                onClick={() => handleSave.mutate()}
-                className="w-40"
-              >
-                Save
-              </Button>
+              {active === 'profil' ? (
+                <Button
+                  isLoading={handleSave.isLoading}
+                  onClick={() => handleSave.mutate()}
+                  className="w-40"
+                >
+                  Save
+                </Button>
+              ) : (
+                <Button
+                  isLoading={handleSavePassword.isLoading}
+                  onClick={() => handleSavePassword.mutate()}
+                >
+                  Save Password
+                </Button>
+              )}
             </div>
           </div>
         </div>

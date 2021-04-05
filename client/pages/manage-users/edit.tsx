@@ -43,7 +43,16 @@ export const getServerSideProps: GetServerSideProps<HandcraftPageProps> = async 
 };
 
 const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = ({
-  data: { name = '', profile_picture = '', username = '' },
+  data: {
+    name = '',
+    profile_picture = '',
+    username = '',
+    address = '',
+    date_of_birth = '',
+    email = '',
+    phone_number_whatsapp = '',
+    id,
+  },
 }) => {
   const Router = useRouter();
 
@@ -53,6 +62,10 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
     profile_picture,
     role: 1,
     username,
+    address,
+    date_of_birth,
+    email,
+    phone_number_whatsapp,
   });
   const [displayImage, setDisplayImage] = useState<string>(profile_picture);
   const [resetPassword, setResetPassword] = useState<boolean>(false);
@@ -96,7 +109,7 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
   };
 
   const handleSave = useMutation(() => {
-    return fetch(urlApi + '/admin/register', {
+    return fetch(urlApi + `/admin/update/account/seller?user_id=${id}`, {
       credentials: 'include',
       method: 'POST',
       body: JSON.stringify(state),
@@ -171,14 +184,25 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
                   autoComplete="off"
                 />
                 <Textfield
+                  labelText="Email :"
+                  fullWidth
+                  placeholder="jonedoe@gmail.com"
+                  variant="borderless"
+                  className="mb-8"
+                  name="email"
+                  onChange={handleChange}
+                  value={state.email}
+                  autoComplete="off"
+                />
+                <Textfield
                   labelText="Alamat :"
                   fullWidth
                   placeholder="Jl. Penuh Kenangan No.6"
                   variant="borderless"
                   className="mb-8"
-                  name="name"
+                  name="address"
                   onChange={handleChange}
-                  //   value={state.name}
+                  value={state.address}
                   autoComplete="off"
                 />
                 <Textfield
@@ -187,9 +211,9 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
                   placeholder="Semarang, 3 September 1996"
                   variant="borderless"
                   className="mb-8"
-                  name="name"
+                  name="date_of_birth"
                   onChange={handleChange}
-                  //   value={state.name}
+                  value={state.date_of_birth}
                   autoComplete="off"
                 />
                 <Textfield
@@ -198,9 +222,9 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
                   placeholder="08123677489"
                   variant="borderless"
                   className="mb-8"
-                  name="name"
+                  name="phone_number_whatsapp"
                   onChange={handleChange}
-                  //   value={state.name}
+                  value={state.phone_number_whatsapp}
                   autoComplete="off"
                 />
                 <Textfield
@@ -213,6 +237,7 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
                   onChange={handleChange}
                   value={state.username}
                   autoComplete="off"
+                  disabled
                 />
                 <button
                   onClick={() => setResetPassword(true)}
@@ -224,7 +249,7 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
             </div>
             <div className="flex justify-center mt-20">
               <Button
-                disabled
+                disabled={!(state.name && state.profile_picture)}
                 isLoading={handleSave.isLoading}
                 onClick={() => handleSave.mutate()}
                 className="w-40"

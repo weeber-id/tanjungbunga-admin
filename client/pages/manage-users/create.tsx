@@ -1,11 +1,12 @@
 import { DummyDefaultUpload } from 'assets';
 import { Image, Sidebar, UploadPhoto, Textfield, Button, Dialog } from 'components';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useMutation } from 'react-query';
 import { urlApi } from 'utils';
 import { uuid } from 'uuidv4';
 import { User } from 'utils/types';
 import { useRouter } from 'next/router';
+import debounce from 'lodash.debounce';
 
 const CreateUserPage = () => {
   const Router = useRouter();
@@ -17,14 +18,20 @@ const CreateUserPage = () => {
     role: 1,
     username: '',
     password: '',
+    address: '',
+    date_of_birth: '',
+    email: '',
+    phone_number_whatsapp: '',
   });
   const [displayImage, setDisplayImage] = useState<string>('');
+  const [isUserNameExist, setIsUserNameExist] = useState<boolean>();
+  const [loadingUsername, setLoadingUsername] = useState<boolean>(false);
 
   const handleUpload = useMutation(
     (blob: Blob) => {
       const formdata = new FormData();
       formdata.append('file', blob, uuid());
-      formdata.append('folder_name', 'lodgings');
+      formdata.append('folder_name', 'sellers');
 
       return fetch(urlApi + '/admin/media/upload/public', {
         method: 'POST',
@@ -49,14 +56,36 @@ const CreateUserPage = () => {
     }
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = e.target;
+  const handleCheckUserName = useCallback(
+    debounce(async (username: string) => {
+      const res = await fetch(urlApi + `/admin/register/check-username?username=${username}`, {
+        credentials: 'include',
+      });
 
-    setState({
-      ...state,
-      [name]: value,
-    });
-  };
+      if (res.ok) setIsUserNameExist(true);
+      else setIsUserNameExist(false);
+
+      setLoadingUsername(false);
+    }, 500),
+    []
+  );
+
+  const handleChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value, name } = e.target;
+
+      setState({
+        ...state,
+        [name]: value,
+      });
+
+      if (name === 'username' && value) {
+        setLoadingUsername(true);
+        handleCheckUserName(value);
+      }
+    },
+    [handleCheckUserName, state]
+  );
 
   const handleSave = useMutation(() => {
     return fetch(urlApi + '/admin/register', {
@@ -124,6 +153,50 @@ const CreateUserPage = () => {
                   autoComplete="off"
                 />
                 <Textfield
+                  labelText="Email :"
+                  fullWidth
+                  placeholder="jonedoe@gmail.com"
+                  variant="borderless"
+                  className="mb-8"
+                  name="email"
+                  onChange={handleChange}
+                  value={state.email}
+                  autoComplete="off"
+                />
+                <Textfield
+                  labelText="Alamat :"
+                  fullWidth
+                  placeholder="Jl. Penuh Kenangan No.6"
+                  variant="borderless"
+                  className="mb-8"
+                  name="address"
+                  onChange={handleChange}
+                  value={state.address}
+                  autoComplete="off"
+                />
+                <Textfield
+                  labelText="Tempat, Tanggal Lahir :"
+                  fullWidth
+                  placeholder="Semarang, 3 September 1996"
+                  variant="borderless"
+                  className="mb-8"
+                  name="date_of_birth"
+                  onChange={handleChange}
+                  value={state.date_of_birth}
+                  autoComplete="off"
+                />
+                <Textfield
+                  labelText="No. Whatsapp :"
+                  fullWidth
+                  placeholder="08123677489"
+                  variant="borderless"
+                  className="mb-8"
+                  name="phone_number_whatsapp"
+                  onChange={handleChange}
+                  value={state.phone_number_whatsapp}
+                  autoComplete="off"
+                />
+                <Textfield
                   placeholder="janedoe"
                   className="mb-8"
                   fullWidth
@@ -133,6 +206,11 @@ const CreateUserPage = () => {
                   onChange={handleChange}
                   value={state.username}
                   autoComplete="off"
+                  errorMessage="Username tidak dapat digunakan"
+                  isValid={isUserNameExist && state.username.length > 0}
+                  isError={!isUserNameExist && state.username.length > 0}
+                  validMessage="Username dapat digunakan"
+                  isLoading={loadingUsername}
                 />
                 <Textfield
                   name="password"
@@ -148,6 +226,15 @@ const CreateUserPage = () => {
             </div>
             <div className="flex justify-center mt-20">
               <Button
+                disabled={
+                  !(
+                    state.name &&
+                    state.profile_picture &&
+                    state.username &&
+                    state.password &&
+                    !isUserNameExist
+                  )
+                }
                 isLoading={handleSave.isLoading}
                 onClick={() => handleSave.mutate()}
                 className="w-40"

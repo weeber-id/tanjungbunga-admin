@@ -4,6 +4,10 @@ export type User = {
   role: 0 | 1;
   profile_picture: string;
   username: string;
+  address: string;
+  date_of_birth: string;
+  email: string;
+  phone_number_whatsapp: string;
   isLoggedIn?: boolean;
 };
 
