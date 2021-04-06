@@ -47,7 +47,7 @@ const CreateArtikelPage = () => {
   const { isLoading } = useQuery<RelatedContent[]>(
     'related-articles',
     () => {
-      return fetch(urlApi + '/admin/article/list-contents-related?search=cafe', {
+      return fetch(urlApi + '/admin/article/list-contents-related', {
         credentials: 'include',
       })
         .then((res) => res.json())

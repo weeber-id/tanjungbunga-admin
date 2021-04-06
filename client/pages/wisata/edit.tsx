@@ -12,7 +12,8 @@ import {
 } from 'components';
 import TextField from 'components/atoms/textfield';
 import CardRelated from 'components/mollecules/card-related';
-import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
+import { convertFromHTML } from 'draft-convert';
+import { convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import dynamic from 'next/dynamic';
@@ -101,12 +102,15 @@ const EditWisataPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
   const [textEditor, setTextEditor] = useState<EditorState | undefined>(() => {
     if (!process.browser) return undefined;
 
-    const blocksFromHTML = convertFromHTML(data.description);
-    const state = ContentState.createFromBlockArray(
-      blocksFromHTML.contentBlocks,
-      blocksFromHTML.entityMap
-    );
-    return EditorState.createWithContent(state);
+    const blocksFromHTML = convertFromHTML({
+      htmlToEntity: (nodeName, node, createEntity) => {
+        if (nodeName === 'p' && node.innerHTML === '') {
+          return createEntity('BREAK', 'MUTABLE', node);
+        }
+      },
+    })(data.description);
+
+    return EditorState.createWithContent(blocksFromHTML);
   });
   const [active, setActive] = useState<'edit' | 'tanya-jawab'>('edit');
   const [lodgingOptions, setLodgingOptions] = useState<Record<string, OptionTypeBase>>({});

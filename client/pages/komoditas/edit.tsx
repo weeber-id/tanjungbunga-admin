@@ -13,7 +13,8 @@ import {
   UploadPhoto,
 } from 'components';
 import TextField from 'components/atoms/textfield';
-import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
+import { convertToRaw, EditorState } from 'draft-js';
+import { convertFromHTML } from 'draft-convert';
 import draftToHtml from 'draftjs-to-html';
 import { useMedia } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -112,12 +113,15 @@ const EditKomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
   const [textEditor, setTextEditor] = useState<EditorState | undefined>(() => {
     if (!process.browser) return undefined;
 
-    const blocksFromHTML = convertFromHTML(data.description);
-    const state = ContentState.createFromBlockArray(
-      blocksFromHTML.contentBlocks,
-      blocksFromHTML.entityMap
-    );
-    return EditorState.createWithContent(state);
+    const blocksFromHTML = convertFromHTML({
+      htmlToEntity: (nodeName, node, createEntity) => {
+        if (nodeName === 'p' && node.innerHTML === '') {
+          return createEntity('BREAK', 'MUTABLE', node);
+        }
+      },
+    })(data.description);
+
+    return EditorState.createWithContent(blocksFromHTML);
   });
   const [active, setActive] = useState<'edit' | 'tanya-jawab'>('edit');
 

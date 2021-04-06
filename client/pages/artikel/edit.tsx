@@ -1,7 +1,8 @@
 import { DummyDefaultUpload } from 'assets';
 import { Button, Dialog, Image, Sidebar, SidebarMobile, UploadPhoto } from 'components';
 import TextField from 'components/atoms/textfield';
-import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
+import { convertToRaw, EditorState } from 'draft-js';
+import { convertFromHTML } from 'draft-convert';
 import draftToHtml from 'draftjs-to-html';
 import { useMedia } from 'hooks';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -74,12 +75,15 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
   const [textEditor, setTextEditor] = useState<EditorState | undefined>(() => {
     if (!process.browser) return undefined;
 
-    const blocksFromHTML = convertFromHTML(data.body);
-    const state = ContentState.createFromBlockArray(
-      blocksFromHTML.contentBlocks,
-      blocksFromHTML.entityMap
-    );
-    return EditorState.createWithContent(state);
+    const blocksFromHTML = convertFromHTML({
+      htmlToEntity: (nodeName, node, createEntity) => {
+        if (nodeName === 'p' && node.innerHTML === '') {
+          return createEntity('BREAK', 'MUTABLE', node);
+        }
+      },
+    })(data.body);
+
+    return EditorState.createWithContent(blocksFromHTML);
   });
   const [relatedOptions, setRelatedOptions] = useState<Record<string, OptionTypeBase>>({});
   const [relatedContent, setRelatedContent] = useState<Record<string, RelatedContent | undefined>>(
@@ -103,7 +107,7 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
   const { isLoading } = useQuery<RelatedContent[]>(
     'related-articles',
     () => {
-      return fetch(urlApi + '/admin/article/list-contents-related?search=cafe', {
+      return fetch(urlApi + '/admin/article/list-contents-related', {
         credentials: 'include',
       })
         .then((res) => res.json())
