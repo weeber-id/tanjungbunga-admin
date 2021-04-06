@@ -119,6 +119,20 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
     });
   });
 
+  const handleResetPassword = useMutation(
+    () => {
+      return fetch(urlApi + `/admin/update/account/seller/reset-password?user_id=${id}`, {
+        credentials: 'include',
+        method: 'POST',
+      });
+    },
+    {
+      onSuccess() {
+        setResetPassword(false);
+      },
+    }
+  );
+
   return (
     <>
       {resetPassword && (
@@ -129,14 +143,20 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
           submitText="Reset"
           onCancel={() => setResetPassword(false)}
           headerColor="red"
+          onSubmit={() => handleResetPassword.mutate()}
+          isLoading={handleResetPassword.isLoading}
         />
       )}
-      {handleSave.isSuccess && (
+      {(handleSave.isSuccess || handleResetPassword.isSuccess) && (
         <Dialog
           singleButton
           onSubmit={() => Router.push('/manage-users')}
           heading="Berhasil"
-          message={`${state.name} Berhasil dibuat!`}
+          message={
+            handleSave.isSuccess
+              ? `${state.name} Berhasil dibuat!`
+              : 'Password Berhasil direset! Informasikan kepada seller untuk mengecek email.'
+          }
         />
       )}
       {isUpload && (
@@ -249,7 +269,7 @@ const EditUserPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePro
             </div>
             <div className="flex justify-center mt-20">
               <Button
-                disabled={!(state.name && state.profile_picture)}
+                disabled={!state.name}
                 isLoading={handleSave.isLoading}
                 onClick={() => handleSave.mutate()}
                 className="w-40"

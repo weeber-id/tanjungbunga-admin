@@ -226,15 +226,7 @@ const CreateUserPage = () => {
             </div>
             <div className="flex justify-center mt-20">
               <Button
-                disabled={
-                  !(
-                    state.name &&
-                    state.profile_picture &&
-                    state.username &&
-                    state.password &&
-                    !isUserNameExist
-                  )
-                }
+                disabled={!(state.name && state.username && state.password && isUserNameExist)}
                 isLoading={handleSave.isLoading}
                 onClick={() => handleSave.mutate()}
                 className="w-40"
