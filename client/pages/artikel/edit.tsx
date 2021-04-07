@@ -274,8 +274,9 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
                 />
                 <div className="mt-4 w-full">
                   {Object.values(relatedContent)
-                    .filter((val) => val !== undefined)
-                    .map(({ id, name }) => (
+                    ?.filter((val) => val !== undefined)
+                    // @ts-ignore
+                    ?.map(({ id, name }) => (
                       <CardRelated
                         onDelete={() => {
                           setRelatedContent({
