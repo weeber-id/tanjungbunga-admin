@@ -349,7 +349,7 @@ const EditArtikelPage: React.FC<InferGetServerSidePropsType<typeof getServerSide
           </div>
           <div className="flex justify-center mb-6">
             <Button
-              disabled={!(state.image_cover && state.title)}
+              disabled={!(state.image_cover && state.title && state.body)}
               isLoading={handleSave.isLoading}
               onClick={() => handleSave.mutate()}
             >

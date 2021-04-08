@@ -521,7 +521,19 @@ const EditKerajinanPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
           </div>
           {active === 'edit' && (
             <div className="flex justify-center mb-6">
-              <Button isLoading={handleSave.isLoading} onClick={() => handleSave.mutate()}>
+              <Button
+                disabled={
+                  !(
+                    state.description &&
+                    state.name &&
+                    state.image &&
+                    state.short_description &&
+                    state.price
+                  )
+                }
+                isLoading={handleSave.isLoading}
+                onClick={() => handleSave.mutate()}
+              >
                 Save
               </Button>
             </div>

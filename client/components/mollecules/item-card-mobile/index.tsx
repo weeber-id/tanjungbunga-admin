@@ -1,6 +1,7 @@
 import { IconEdit, IconRecommendation, IconTrash } from 'assets';
 import classNames from 'classnames';
 import { Image, Switch } from 'components/atoms';
+import { useUser } from 'hooks';
 
 interface ItemCardMobileProps {
   className?: string;
@@ -37,6 +38,8 @@ const ItemCardMobile: React.FC<ItemCardMobileProps> = ({
   isRecommended,
   createdAt,
 }) => {
+  const { user } = useUser();
+
   return (
     <div
       className={classNames('px-2 py-4 text-black', className, {
@@ -68,13 +71,17 @@ const ItemCardMobile: React.FC<ItemCardMobileProps> = ({
             <Switch checked={active} onChange={onSwitchChange} size="sm" />
           </div>
         </div>
-        <div className="col-span-5 grid grid-cols-3 gap-x-3">
-          <button
-            onClick={onRecommend}
-            className="w-[34px] h-[34px] border border-black rounded-md flex items-center justify-center"
-          >
-            <IconRecommendation />
-          </button>
+        <div className="col-span-5 grid grid-cols-3 gap-x-3 items-center">
+          {user?.role === 0 ? (
+            <button
+              onClick={onRecommend}
+              className="w-[34px] h-[34px] border border-black rounded-md flex items-center justify-center"
+            >
+              <IconRecommendation />
+            </button>
+          ) : (
+            <div />
+          )}
           <button
             onClick={onDelete}
             className="w-[34px] h-[34px] border border-black rounded-md flex items-center justify-center"

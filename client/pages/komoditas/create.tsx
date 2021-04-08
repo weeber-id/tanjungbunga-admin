@@ -40,7 +40,7 @@ const CreateKomoditasPage = () => {
     price: {
       start: '',
       end: '',
-      unit: 'Item',
+      unit: '',
     },
     short_description: '',
     links: [],
@@ -61,13 +61,23 @@ const CreateKomoditasPage = () => {
   const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
 
+    if (name === 'unit') {
+      setState({
+        ...state,
+        price: {
+          ...state.price,
+          [name]: value,
+        },
+      });
+      return;
+    }
+
     const number = addCommas(removeNonNumeric(value));
 
     setState({
       ...state,
       price: {
         ...state.price,
-        unit: 'Item',
         [name]: number,
       },
     });
@@ -245,7 +255,7 @@ const CreateKomoditasPage = () => {
                   name="name"
                   onChange={handleChange}
                 />
-                <div className="sm:grid grid-cols-3 gap-x-12 mb-6">
+                <div className="sm:grid grid-cols-2 gap-x-12 mb-6">
                   <div className="flex flex-col mb-4 sm:mb-0">
                     <TextField
                       labelText="Harga Mulai Dari :"
@@ -263,13 +273,24 @@ const CreateKomoditasPage = () => {
                       placeholder="Masukan Harga"
                       variant="borderless"
                       fullWidth
+                      className="mb-4"
                       onChange={handleChangePrice}
                       value={state.price.end}
                       name="end"
                       autoComplete="off"
                     />
+                    <TextField
+                      labelText="Unit :"
+                      placeholder="Cth: Porsi, Kilogram, Item, dll"
+                      variant="borderless"
+                      fullWidth
+                      onChange={handleChangePrice}
+                      value={state.price.unit}
+                      name="unit"
+                      autoComplete="off"
+                    />
                   </div>
-                  <div className="flex flex-col col-span-2">
+                  <div className="flex flex-col">
                     <span className="text-body text-black mb-2">Jam Buka :</span>
                     <Radio
                       onChange={handleChangeOpeningHour}
@@ -376,7 +397,21 @@ const CreateKomoditasPage = () => {
             </div>
           </div>
           <div className="flex justify-center mb-6">
-            <Button isLoading={handleSave.isLoading} onClick={() => handleSave.mutate()}>
+            <Button
+              disabled={
+                !(
+                  state.description &&
+                  state.name &&
+                  state.image &&
+                  state.short_description &&
+                  state.price.start &&
+                  state.price.end &&
+                  state.price.unit
+                )
+              }
+              isLoading={handleSave.isLoading}
+              onClick={() => handleSave.mutate()}
+            >
               Save
             </Button>
           </div>

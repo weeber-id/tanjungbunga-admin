@@ -121,6 +121,7 @@ const AboutPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>
           aspectRatio="3/4"
           onCancel={() => setUpload(false)}
           isLoading={handleUpload.isLoading}
+          shape="rect"
         />
       )}
       <div className="grid grid-cols-page h-screen">
@@ -192,7 +193,7 @@ const AboutPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>
                 isLoading={handleSave.isLoading}
                 onClick={() => handleSave.mutate()}
                 className="w-40"
-                disabled={!(state.profile_picture && state.name)}
+                disabled={!(state.profile_picture && state.name && state.body && state.position)}
               >
                 Save
               </Button>

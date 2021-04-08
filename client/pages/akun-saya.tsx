@@ -327,6 +327,16 @@ const MyAccountPage = () => {
             <div className="flex justify-center mt-20">
               {active === 'profil' ? (
                 <Button
+                  disabled={
+                    !(
+                      state.name &&
+                      state.username &&
+                      state.email &&
+                      state.address &&
+                      state.date_of_birth &&
+                      state.phone_number_whatsapp
+                    )
+                  }
                   isLoading={handleSave.isLoading}
                   onClick={() => handleSave.mutate()}
                   className="w-40"
@@ -335,6 +345,13 @@ const MyAccountPage = () => {
                 </Button>
               ) : (
                 <Button
+                  disabled={
+                    !(
+                      passwordState.new_password &&
+                      passwordState.old_password &&
+                      passwordState.confirm_new_password
+                    ) || passwordState.new_password !== passwordState.confirm_new_password
+                  }
                   isLoading={handleSavePassword.isLoading}
                   onClick={() => handleSavePassword.mutate()}
                 >
