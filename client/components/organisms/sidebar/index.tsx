@@ -131,7 +131,7 @@ const Sidebar = () => {
                         asPath === '/komoditas' ? 'text-red' : 'text-purple-light '
                       )}
                     >
-                      Komoditas
+                      Produk & Kuliner
                     </a>
                   </Link>
                   <Link href="/kerajinan">

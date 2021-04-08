@@ -163,7 +163,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
         <Dialog
           singleButton
           heading="Berhasil"
-          message={`${itemToDelete?.name ?? 'Komoditas'} berhasil dihapus`}
+          message={`${itemToDelete?.name ?? 'Produk & Kuliner'} berhasil dihapus`}
           onSubmit={() => {
             handleDelete.reset();
           }}
@@ -173,7 +173,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
         <Dialog
           singleButton
           heading="Berhasil"
-          message={`${itemToRecommend?.name ?? 'Komoditas'} berhasil direkomendasikan`}
+          message={`${itemToRecommend?.name ?? 'Produk & Kuliner'} berhasil direkomendasikan`}
           onSubmit={() => {
             handleChangeRecommendation.reset();
           }}
@@ -184,7 +184,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
           submitText="Hapus"
           highlightCancelButton
           headerColor="red"
-          heading="Hapus Komoditas"
+          heading="Hapus Produk & Kuliner"
           message={`Anda yakin ingin menghapus ${itemToDelete?.name ?? ''}`}
           onCancel={() => setItemToDelete(undefined)}
           isLoading={handleDelete.isLoading}
@@ -194,7 +194,9 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
       {itemToRecommend && (
         <Dialog
           heading={
-            itemToRecommend.recommendation ? 'Batalkan Rekomendasi' : 'Rekomendasikan Komoditas'
+            itemToRecommend.recommendation
+              ? 'Batalkan Rekomendasi'
+              : 'Rekomendasikan Produk & Kuliner'
           }
           message={`Anda yakin ingin ${
             itemToRecommend.recommendation ? 'menghapus rekomendasi' : 'merekomendasikan'
@@ -214,10 +216,10 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
           <Sidebar />
           <div className="overflow-y-auto pb-10">
             <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
-              Komoditas
+              Produk & Kuliner
             </h5>
             <div className="px-12 mt-6">
-              <Button href="/komoditas/create">+ Tambah Komoditas</Button>
+              <Button href="/komoditas/create">+ Tambah Produk & Kuliner</Button>
               <div className="flex items-center justify-between mt-10">
                 <Pagination
                   onChange={(cp) => setCurrentPage(cp)}
@@ -236,8 +238,8 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                 <div className="grid gap-x-6 grid-cols-table text-body font-medium text-purple border border-purple-light rounded-tl-lg rounded-tr-lg py-2 mb-1">
                   <div className="justify-self-center">No.</div>
                   <div>Foto</div>
-                  <div>Nama Komoditas</div>
-                  <div>Harga Komoditas</div>
+                  <div>Nama Produk & Kuliner</div>
+                  <div>Harga Produk & Kuliner</div>
                   <div>Tampilkan</div>
                   <div></div>
                 </div>
@@ -288,12 +290,12 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
         <>
           <SidebarMobile />
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-4 border-b border-purple-light">
-            Komoditas
+            Produk & Kuliner
           </h5>
           <div className="p-4">
             <div className="flex items-center mb-8">
               <Button href="/komoditas/create" className="mr-6">
-                + Tambah Komoditas
+                + Tambah Produk & Kuliner
               </Button>
               <form onSubmit={handleSubmitSearch}>
                 <Textfield
@@ -320,7 +322,7 @@ const KomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSidePr
                       className="mb-3"
                       orderNumber={orderNumber}
                       key={id}
-                      label="Harga Komoditas"
+                      label="Harga Produk & Kuliner"
                       price={numeral(price.start).format('0,0')}
                       unit={price.unit}
                       name={name}

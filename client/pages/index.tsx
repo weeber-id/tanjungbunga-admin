@@ -55,7 +55,7 @@ const Home: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>> = (
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-x-6 gap-y-4">
               {user?.role === 0 && <CardDashboard title="Wisata" value={data?.travel?.count} />}
               <CardDashboard title="Penginapan" value={data?.lodging.count} />
-              <CardDashboard title="Kuliner" value={data?.culinary.count} />
+              <CardDashboard title="Produk & Kuliner" value={data?.culinary.count} />
               <CardDashboard title="Produk Belanja" value={data?.handcraft.count} />
             </div>
           </div>

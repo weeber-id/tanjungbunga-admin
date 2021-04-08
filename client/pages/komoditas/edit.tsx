@@ -314,7 +314,7 @@ const EditKomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
         {isMobile ? <SidebarMobile /> : <Sidebar />}
         <div className="overflow-y-auto">
           <h5 className="text-h5 font-bold text-purple-light pt-6 pb-4 px-12 border-b border-purple-light">
-            Edit Komoditas
+            Edit Produk & Kuliner
           </h5>
           <div className="sm:px-12 px-6 py-10">
             <div style={{ gridTemplateColumns: '312px 1fr' }} className="sm:grid gap-x-6">
@@ -337,7 +337,7 @@ const EditKomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
               </div>
               <div className="flex flex-col">
                 <TextField
-                  labelText="Nama Komoditas :"
+                  labelText="Nama Produk & Kuliner :"
                   fullWidth
                   placeholder="Please input text here"
                   variant="borderless"
@@ -403,7 +403,7 @@ const EditKomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                 </div>
                 <TextField
                   fullWidth
-                  labelText="Penjelasan Singkat Komoditas"
+                  labelText="Penjelasan Singkat Produk & Kuliner"
                   variant="borderless"
                   maxLength={180}
                   autoComplete="off"
@@ -474,7 +474,9 @@ const EditKomoditasPage: React.FC<InferGetServerSidePropsType<typeof getServerSi
                   />
                 </div>
                 <div className="pb-20 border-b border-black last:border-0">
-                  <h5 className="text-black font-bold mt-10 mb-6 text-h5">Pesan Komoditas</h5>
+                  <h5 className="text-black font-bold mt-10 mb-6 text-h5">
+                    Pesan Produk & Kuliner
+                  </h5>
                   {linksLength.map((value, i) => (
                     <div
                       key={`value.name-${i}`}

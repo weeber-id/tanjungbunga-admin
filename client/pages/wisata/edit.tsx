@@ -137,7 +137,7 @@ const EditWisataPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
   const { isLoading: loadingLodgings } = useQuery<Lodging[]>(
     'lodging-options',
     () => {
-      return fetch(urlApi + `/admin/lodgings`, {
+      return fetch(urlApi + `/lodgings`, {
         credentials: 'include',
       })
         .then((res) => res.json())
@@ -164,7 +164,7 @@ const EditWisataPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
   const { isLoading: loadingCulinaries } = useQuery<Commodity[]>(
     'culinariy-options',
     () => {
-      return fetch(urlApi + `/admin/culinaries`, {
+      return fetch(urlApi + `/culinaries`, {
         credentials: 'include',
       })
         .then((res) => res.json())

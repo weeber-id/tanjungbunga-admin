@@ -1,6 +1,6 @@
 import { DummyDefaultUpload } from 'assets';
 import { Image, Sidebar, UploadPhoto, Textfield, Button, Dialog, SidebarMobile } from 'components';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation } from 'react-query';
 import { urlApi } from 'utils';
 import { uuid } from 'uuidv4';
@@ -33,6 +33,14 @@ const MyAccountPage = () => {
   const [active, setActive] = useState<'profil' | 'password'>('profil');
 
   const isMobile = useMedia({ query: '(max-width: 640px)' });
+
+  // fixed bug reload data doesn't showed
+  useEffect(() => {
+    if (user) {
+      setState(user);
+      setDisplayImage(user.profile_picture);
+    }
+  }, [user]);
 
   const handleUpload = useMutation(
     (blob: Blob) => {
