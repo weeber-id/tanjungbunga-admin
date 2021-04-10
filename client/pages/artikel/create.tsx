@@ -166,9 +166,9 @@ const CreateArtikelPage = () => {
                 >
                   Upload foto
                 </button>
-                {state.image_cover && (
+                {/* {state.image_cover && (
                   <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
-                )}
+                )} */}
                 <div className="text-h5 text-black font-bold my-4">Konten Terkait</div>
                 <Select
                   styles={{
@@ -249,6 +249,7 @@ const CreateArtikelPage = () => {
                 />
                 <div className="text-black mb-6 text-body">Isi Artikel :</div>
                 <Editor
+                  stripPastedStyles
                   toolbar={{
                     options: [
                       'inline',

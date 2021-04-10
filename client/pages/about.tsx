@@ -147,9 +147,9 @@ const AboutPage: React.FC<InferGetServerSidePropsType<typeof getServerSideProps>
                 >
                   Upload foto
                 </button>
-                {state.profile_picture && (
+                {/* {state.profile_picture && (
                   <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
-                )}
+                )} */}
               </div>
               <div className="flex flex-col">
                 <Textfield

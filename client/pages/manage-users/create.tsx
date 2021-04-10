@@ -138,7 +138,20 @@ const CreateUserPage = () => {
                 >
                   Upload foto
                 </button>
-                <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
+                {displayImage && (
+                  <button
+                    onClick={() => {
+                      setDisplayImage('');
+                      setState({
+                        ...state,
+                        profile_picture: '',
+                      });
+                    }}
+                    className="text-body text-red hover:text-purple-light"
+                  >
+                    Hapus foto
+                  </button>
+                )}
               </div>
               <div className="flex flex-col">
                 <Textfield

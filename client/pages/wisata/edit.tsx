@@ -338,9 +338,9 @@ const EditWisataPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                 >
                   Upload foto
                 </button>
-                {state.image && (
+                {/* {state.image && (
                   <button className="text-body text-red hover:text-purple-light">Hapus foto</button>
-                )}
+                )} */}
               </div>
               <div className="flex flex-col">
                 <TextField
@@ -432,6 +432,7 @@ const EditWisataPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
                 <div className="pb-20 border-b border-black last:border-0">
                   <h5 className="text-black font-bold mt-10 mb-6 text-h5">Detail</h5>
                   <Editor
+                    stripPastedStyles
                     toolbar={{
                       options: [
                         'inline',
