@@ -22,7 +22,6 @@ const DiscussionRow: React.FC<DiscussionRowProps> = ({
   body,
   email,
   numberOrder,
-  onDelete,
   questions = [],
   question_id,
   content_id,
@@ -72,15 +71,15 @@ const DiscussionRow: React.FC<DiscussionRowProps> = ({
             >
               Bantu Jawab
             </button>
-            <button
+            {/* <button
               onClick={onDelete}
               className="text-red text-left focus:outline-none hover:text-black mr-2 sm:mr-0"
             >
               Hapus
-            </button>
+            </button> */}
             <button
               onClick={() => setShowAnswer(!showAnswer)}
-              className="text-purple-light text-left focus:outline-none hover:text-black"
+              className="text-red text-left focus:outline-none hover:text-black"
             >
               {showAnswer ? 'Sembunyikan' : 'Tampilkan'} ({questions?.length || 0})
             </button>
@@ -97,9 +96,9 @@ const DiscussionRow: React.FC<DiscussionRowProps> = ({
                 <div></div>
                 <div className="sm:text-black text-purple-light sm:mb-0 mb-2">{email}</div>
                 <div>{body}</div>
-                <div className="text-red hover:text-black sm:text-body text-body-sm text-right sm:text-left sm:mt-0 mt-3">
+                {/* <div className="text-red hover:text-black sm:text-body text-body-sm text-right sm:text-left sm:mt-0 mt-3">
                   <button className="text-left focus:outline-none">Delete</button>
-                </div>
+                </div> */}
               </div>
             ))}
         </div>

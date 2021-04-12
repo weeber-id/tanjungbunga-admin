@@ -300,7 +300,9 @@ const PenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServerSideP
           </h5>
           <div className="p-4">
             <div className="flex items-center mb-8">
-              <Button className="mr-6">+ Tambah Penginapan</Button>
+              <Button href="/penginapan/create" className="mr-6">
+                + Tambah Penginapan
+              </Button>
               <form onSubmit={handleSubmitSearch}>
                 <Textfield
                   value={searchCache}
