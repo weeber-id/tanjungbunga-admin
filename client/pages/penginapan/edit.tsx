@@ -101,7 +101,7 @@ const CreatePenginapanPage: React.FC<InferGetServerSidePropsType<typeof getServe
     name: data.name,
     price: {
       value: addCommas(removeNonNumeric(data.price.value)),
-      unit: 'orang',
+      unit: 'malam',
     },
     short_description: data.short_description,
     links: data.links,

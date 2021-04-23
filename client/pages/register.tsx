@@ -1,4 +1,3 @@
-import { IconWhatsapp } from 'assets';
 import { Button, SidebarLogin } from 'components';
 import { useMedia } from 'hooks';
 
@@ -13,13 +12,15 @@ const RegisterPage = () => {
           Daftar
         </h5>
         <div className="flex flex-col items-center justify-center flex-auto px-6">
-          <IconWhatsapp className="mb-8" />
+          {/* <IconWhatsapp className="mb-8" /> */}
           <h5 className="text-h5 font-bold text-center mb-10 max-w-[600px]">
             Halo! Selamat Datang pengguna baru. Silahkan klik button di bawah ini untuk memulai
             pendaftaran.
           </h5>
-          <Button className="mb-2.5">WA (0626 - 01020304)</Button>
-          <div className="text-body text-grey">Hubungan Masyarakat (Humas)</div>
+          <Button isExternal href="https://forms.gle/CHREuV5tN9RePDS2A" className="mb-2.5">
+            Daftar via Google Form
+          </Button>
+          {/* <div className="text-body text-grey">Hubungan Masyarakat (Humas)</div> */}
         </div>
       </div>
     </div>

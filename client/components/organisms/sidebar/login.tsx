@@ -1,11 +1,7 @@
 import { IconTanjungBunga } from 'assets';
 import classNames from 'classnames';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 
 const SidebarLogin = () => {
-  const { asPath } = useRouter();
-
   return (
     <>
       <div className="flex flex-col h-full bg-blue-light">
@@ -18,16 +14,14 @@ const SidebarLogin = () => {
         <div className="px-5 h-full">
           <div className="py-6 h-full px-2 text-body">
             <div className="flex flex-col h-full justify-center items-center">
-              <Link href="/register">
-                <a
-                  className={classNames(
-                    'hover:text-red mb-5 font-bold',
-                    asPath === '/register' ? 'text-red' : 'text-purple-light '
-                  )}
-                >
-                  Panduan
-                </a>
-              </Link>
+              <a
+                href="https://drive.google.com/file/d/1VKMe0mcOYfWYwG6in3hcT7kQNa_uG_bR/view"
+                target="_blank"
+                rel="noreferrer noopener"
+                className={classNames('hover:text-red mb-5 font-bold', 'text-purple-light ')}
+              >
+                Panduan
+              </a>
             </div>
           </div>
         </div>

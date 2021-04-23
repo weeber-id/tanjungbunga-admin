@@ -42,7 +42,7 @@ const CreatePenginapanPage = () => {
     name: '',
     price: {
       value: '',
-      unit: 'orang',
+      unit: 'malam',
     },
     short_description: '',
     links: [],
